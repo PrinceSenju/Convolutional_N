@@ -1,17 +1,34 @@
 #include <stdio.h>
 #include "libcorr.h"
 
-void corr2d(int *X, int Wx, int Hx, int *K, int w, int h, int *Y)
+/*
+ * input: X - image, Hx, Wx - image size
+          K - kernel, h, w - kernel size
+ * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+ */
+void corr2d(int *X, unsigned Wx, unsigned Hx, int *K, unsigned w, unsigned h, int *Y)
 {
+    unsigned row, col;
+    unsigned i, j;
 
-/* implement me */
+    unsigned Wy = Wx - w + 1;
+    unsigned Hy = Hx - h + 1;
 
+    for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+            *(Y + row * Wy + col) = 0;
+            for (i = 0; i < h; i++) {
+                for (j = 0; j < w; j++) {  
+                   *(Y + row *Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j));
+                }
+            }
+         }
+     }
 }
 
-
-void print2d(int *X, int Wx, int Hx)
+void print2d(int *X, unsigned Wx, unsigned Hx)
 {
-   int x, y;
+   unsigned x, y;
 
    for (y = 0; y < Hx; y++) {
       for (x = 0; x < Wx; x++) {
