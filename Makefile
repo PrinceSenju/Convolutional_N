@@ -2,9 +2,9 @@ src = $(wildcard *.c)
 obj = $(src:.c=.o)
 dep = $(obj:.o=.d)  # one dependency file for each source
 
-CFLAGS = -Wall -std=c1x
+CFLAGS = -Wall -std=c++1y
 LDFLAGS = -lm -lc
-CC=gcc
+CC=g++
 
 test: $(obj)
 	$(CC) -o $@ $^ $(LDFLAGS)
