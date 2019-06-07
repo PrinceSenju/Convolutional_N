@@ -5,9 +5,15 @@
  * input: X - image, Hx, Wx - image size
           K - kernel, h, w - kernel size
  * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+ why should  we use flop
+	figure out what operations can be floating operationsx
  */
-void corr2d(int *X, unsigned Wx, unsigned Hx, int *K, unsigned w, unsigned h, int *Y)
+
+int Double::add_count = 0;
+void  corr2d(T *X, unsigned Wx, unsigned Hx, T *K, unsigned w, unsigned h, T *Y) //changed int type to T
 {
+//I think i just need one genneric type     
+
     unsigned row, col;
     unsigned i, j;
 
@@ -19,14 +25,15 @@ void corr2d(int *X, unsigned Wx, unsigned Hx, int *K, unsigned w, unsigned h, in
             *(Y + row * Wy + col) = 0;
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {  
-                   *(Y + row *Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j));
+                 	flops+=2;
+			  *(Y + row *Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j));
                 }
             }
          }
      }
 }
 
-void print2d(int *X, unsigned Wx, unsigned Hx)
+void T print2d(T *X, unsigned Wx, unsigned Hx)
 {
    unsigned x, y;
 
