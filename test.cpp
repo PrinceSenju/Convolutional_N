@@ -14,6 +14,7 @@ void simple_test()
 
     const unsigned w = 2;
     const unsigned h = 2;
+    // float K[5*5] = { Wx, X, Hx};
     float K[2*2] = { 0.0, 1.0,  2.0, 3.0 };
 
     const unsigned Wy = Wx - w + 1;
@@ -58,6 +59,13 @@ void more_complex_tes()
     random2d<float>(X, Wx, Hx); 
 
     // @implement me
+  for (int y = 0; y < Hx; y++) {
+     for (int x = 0; x < Wx; x++) {
+        *(X+y*Wx+x) = 1 + rand() % 300;
+        cout << *(X+y*Wx+x);
+}
+
+
 
 }
 
