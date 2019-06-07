@@ -48,6 +48,21 @@ template <class T>
 void random2d(T *X, unsigned Wx, unsigned Hx)
 {
 // @implement me: fill in array with random numbers
-
+int X = ( 1 + rand() % 300 );
+    int Hx = ( 1 + rand() % 300 );
+    int Wx= ( 1 + rand() % 300 );
+    cout << X << " " << Hx << " " << Wx << " ";
+    // give each # a varixable X =;
+    // give each # a variable Wx =;
+    // give each # a variable Hx =; return 0;
 }
 
+/*
+WHERE WOULD I IMPLEMENT THIS? IN THE HEADER OR ?
+#include <iostream>
+
+using namespace std;
+#include <iomanip>
+using std::setw;
+#include <cstdlib> 
+*/
