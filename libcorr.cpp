@@ -49,17 +49,12 @@ void random2d(T *X, unsigned Wx, unsigned Hx)
 {
 // @implement me: fill in array with random numbers
 
-   for (int y = 0; y < Hx; y++) {
-     for (int x = 0; x < Wx; x++) { 
-        *(X+y*Wx+x) = 1 + rand() % 300; 
-        cout << *(X+y*Wx+x);
+   for (unsigned y = 0; y < Hx; y++) {
+     for (unsigned x = 0; x < Wx; x++) { 
+        *(X+y*Wx+x) =  rand() % 256; 
+     //  std::cout << *(X+y*Wx+x) << "   " ;
 }
+	//std::cout << std::endl;
      }
-/* WHERE WOULD I IMPLEMENT THIS? IN THE HEADER OR ?
-   }#include <iostream>
+}
 
-using namespace std;
-#include <iomanip>
-using std::setw;
-#include <cstdlib> 
-*/

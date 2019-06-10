@@ -49,21 +49,19 @@ void simple_test()
     std::cout << "FLOPS: " << flop / elapsed << std::endl;
 }
 
-void more_complex_tes()
+void more_complex_test()
 {
 
-    const unsigned Wx = 120;
-    const unsigned Hx = 120;
+    const unsigned Wx = 120;  // use a globle variaable
+    const unsigned Hx = 120; // use a globle variaable
     float *X = new float[Wx * Hx];
 
     random2d<float>(X, Wx, Hx); 
 
     // @implement me
-  for (int y = 0; y < Hx; y++) {
-     for (int x = 0; x < Wx; x++) {
-        *(X+y*Wx+x) = 1 + rand() % 300;
-        cout << *(X+y*Wx+x);
-}
+  std::cout << "Input matrix: " << std::endl;
+    print2d<float>(X, Wx, Hx);
+    std::cout << std::endl;
 
 
 
@@ -73,9 +71,9 @@ void more_complex_tes()
 // include header function time and input
 int main() {
 
-    simple_tes();
+    simple_test();
 
-    more_complex_tes();
+    more_complex_test();
 
     return 0;
 }
