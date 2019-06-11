@@ -51,19 +51,57 @@ void simple_test()
 
 void more_complex_test()
 {
-
-    const unsigned Wx = 120;  // use a globle variaable
-    const unsigned Hx = 120; // use a globle variaable
-    float *X = new float[Wx * Hx];
+ const unsigned Wx = 10;
+ const unsigned Hx = 10;
+ float *X = new float[Wx * Hx];
 
     random2d<float>(X, Wx, Hx); 
 
     // @implement me
-  std::cout << "Input matrix: " << std::endl;
+    std::cout << "Input matrix: " << std::endl;
+    print2d<float>(X, Wx, Hx);
+    std::cout << std::endl;
+/////////////////////////////////////////////////
+     struct timeval start_clk, end_clk;
+    double elapsed;
+
+    
+    //float X[7*7] = { Wx, X, Hx,   X, Wx, X,   Hx, X, Wx };
+    const unsigned w = 2;
+    const unsigned h = 2;
+    float K[2*2] = { Wx, Wx,  Hx, Hx};
+    //float K[2*2] = { 0.0, 1.0,  2.0, 3.0 };
+
+    const unsigned Wy = Wx - w + 1;
+    const unsigned Hy = Hx - h + 1;
+    float Y[2*2];
+
+    unsigned flop = 0;
+
+    std::cout << "Input matrix: " << std::endl;
     print2d<float>(X, Wx, Hx);
     std::cout << std::endl;
 
+    std::cout << "Kernel: " << std::endl;
+    print2d<float>(K, w, h);
+    std::cout << std::endl;
 
+    gettimeofday(&start_clk, NULL); /// get the start time
+
+    corr2d<float, float, float>(X, Wx, Hx, K, w, h, Y, &flop);
+
+    gettimeofday(&end_clk, NULL); /// get the end time
+
+    std::cout << "Output matrix: " << std::endl;
+    print2d<float>(Y, Wy, Hy);
+    std::cout << std::endl;
+
+    //std::cout << "Start time: " << start_clk << std::endl;
+    //std::cout << "End time: " << end_clk << std::endl;
+    std::cout << "Number of floating-point operations: " << flop << std::endl;
+    elapsed = (end_clk.tv_sec - start_clk.tv_sec) + (end_clk.tv_usec - start_clk.tv_usec) / 1000000.0;
+    std::cout << "Elapsed time: " << elapsed << std::endl;
+    std::cout << "FLOPS: " << flop / elapsed << std::endl;
 
 }
 
@@ -71,7 +109,7 @@ void more_complex_test()
 // include header function time and input
 int main() {
 
-    simple_test();
+    //simple_test();
 
     more_complex_test();
 
