@@ -51,30 +51,28 @@ void simple_test()
 
 void more_complex_test()
 {
+    struct timeval start_clk, end_clk;
+    double elapsed;
+
  const unsigned Wx = 10;
  const unsigned Hx = 10;
  float *X = new float[Wx * Hx];
 
     random2d<float>(X, Wx, Hx); 
 
-    // @implement me
-    std::cout << "Input matrix: " << std::endl;
-    print2d<float>(X, Wx, Hx);
-    std::cout << std::endl;
-/////////////////////////////////////////////////
-     struct timeval start_clk, end_clk;
-    double elapsed;
-
-    
     //float X[7*7] = { Wx, X, Hx,   X, Wx, X,   Hx, X, Wx };
     const unsigned w = 2;
     const unsigned h = 2;
-    float K[2*2] = { Wx, Wx,  Hx, Hx};
+    //float K[2*2] = { Wx, Wx,  Hx, Hx};
+    float *K = new float[w * h];
+
+    random2d(K, w, h);
     //float K[2*2] = { 0.0, 1.0,  2.0, 3.0 };
 
     const unsigned Wy = Wx - w + 1;
     const unsigned Hy = Hx - h + 1;
-    float Y[2*2];
+    //float Y[2*2];
+    float *Y = new float[Wy * Hy];
 
     unsigned flop = 0;
 
@@ -102,6 +100,10 @@ void more_complex_test()
     elapsed = (end_clk.tv_sec - start_clk.tv_sec) + (end_clk.tv_usec - start_clk.tv_usec) / 1000000.0;
     std::cout << "Elapsed time: " << elapsed << std::endl;
     std::cout << "FLOPS: " << flop / elapsed << std::endl;
+
+    delete [] X;
+    delete [] K;
+    delete [] Y;
 
 }
 

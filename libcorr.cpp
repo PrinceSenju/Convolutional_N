@@ -31,6 +31,14 @@ void  corr2d(T *X, unsigned Wx, unsigned Hx, T *K, unsigned w, unsigned h, T *Y,
      }
 }
 
+template <class T, class U, class V>
+void  corr2d0(T *X, unsigned Wx, unsigned Hx, T *K, unsigned w, unsigned h, T *Y, unsigned *flop) 
+{
+
+
+
+}
+
 template <class T>
 void print2d(T *X, unsigned Wx, unsigned Hx)
 {
