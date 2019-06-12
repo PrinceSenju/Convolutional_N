@@ -35,18 +35,21 @@ template <class T, class U, class V>
 void  corr2d0(T *X, unsigned Wx, unsigned Hx, T *K, unsigned w, unsigned h, T *Y, unsigned *flop, unsigned newW, unsigned newH) 
 {
  float *Z = new float[newW *newH];
- for (int i = 0; i < newH; i++ ){
+
+	unsigned i, j;
+
+ for ( i = 0; i < newH; i++ ){
      
-     for (int  j = 0; j < newW; j++ ){
+     for (  j = 0; j < newW; j++ ){
          if(  i < Hx && j < Wx ){ 
-               *( Z + i * newW +j) = *(X + i * Wx + j) 
+               *( Z + i * newW +j) = *(X + i * Wx + j); 
               }
               else {
-              *(Z + i * newW +j) = 0
+              *(Z + i * newW +j) = 0;
               }
 	
-         
-     }
+}         
+     
  }
 	X = Z;
 }
