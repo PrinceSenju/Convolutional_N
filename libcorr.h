@@ -6,6 +6,9 @@
 template <class T, class U, class V>
 void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned *flop);
 
+template <class T, class U, class V>
+void corr2d0(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned *flop);
+
 template <class T>
 void print2d(T *X, unsigned Wx, unsigned Hx);
 
