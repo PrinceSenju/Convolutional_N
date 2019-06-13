@@ -60,33 +60,26 @@ void more_complex_test()
     struct timeval start_clk, end_clk;
     double elapsed;
 
+    const unsigned Wx = 512;
+    const unsigned Hx = 512;
+    float *X = new float[Wx * Hx];
 
- const unsigned Wx = 10;
- const unsigned Hx = 10;
- float *X = new float[Wx * Hx];
+    //random2d<float>(X, Wx, Hx);
+    seq2d<float>(X, Wx, Hx);  
 
-
-  const unsigned P = 10;
-
-  const unsigned newH = 10 + P;
-  const unsigned newW = 10 + P;
-  float *Z = new float[newW * newH];
-
-
-    random2d<float>(X, Wx, Hx); 
-
-    //float X[7*7] = { Wx, X, Hx,   X, Wx, X,   Hx, X, Wx };
-    const unsigned w = 2;
-    const unsigned h = 2;
-    //float K[2*2] = { Wx, Wx,  Hx, Hx};
+    const unsigned w = 5;
+    const unsigned h = 5;
     float *K = new float[w * h];
 
-    random2d(K, w, h);
-    //float K[2*2] = { 0.0, 1.0,  2.0, 3.0 };
+    //random2d(K, w, h);
+    seq2d(K, w, h);
 
-    const unsigned Wy = Wx - w + 1;
-    const unsigned Hy = Hx - h + 1;
-    //float Y[2*2];
+    const unsigned Pw = (w - 1) * 2; 
+    const unsigned Ph = (h - 1) * 2;
+
+    const unsigned Wy = Wx - w + Pw + 1;
+    const unsigned Hy = Hx - h + Ph + 1;
+
     float *Y = new float[Wy * Hy];
 
     unsigned flop = 0;
@@ -99,9 +92,12 @@ void more_complex_test()
     print2d<float>(K, w, h);
     std::cout << std::endl;
 
+    int iters = 100;
+
     gettimeofday(&start_clk, NULL); /// get the start time
-    corr2d0<float, float, float>( Z, Wx, Hx, K, w, h, Y, &flop, newW, newH );
-    corr2d<float, float, float>(X, Wx, Hx, K, w, h, Y, &flop);
+
+    for (int i = 0; i < iters; i++)
+    corr2d0_v1<float, float, float>(X, Wx, Hx, K, w, h, Y, Pw, Ph, &flop);
 
     gettimeofday(&end_clk, NULL); /// get the end time
 
@@ -113,7 +109,7 @@ void more_complex_test()
     //std::cout << "End time: " << end_clk << std::endl;
     std::cout << "Number of floating-point operations: " << flop << std::endl;
     elapsed = (end_clk.tv_sec - start_clk.tv_sec) + (end_clk.tv_usec - start_clk.tv_usec) / 1000000.0;
-    std::cout << "Elapsed time: " << elapsed << std::endl;
+    std::cout << "Elapsed time per iteration: " << elapsed/iters << std::endl;
     std::cout << "FLOPS: " << flop / elapsed << std::endl;
 
     delete [] X;
