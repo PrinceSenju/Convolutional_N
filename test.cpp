@@ -60,15 +60,15 @@ void more_complex_test()
     struct timeval start_clk, end_clk;
     double elapsed;
 
-    const unsigned Wx = 512;
-    const unsigned Hx = 512;
+    const unsigned Wx = 3;
+    const unsigned Hx = 3;
     float *X = new float[Wx * Hx];
 
     //random2d<float>(X, Wx, Hx);
     seq2d<float>(X, Wx, Hx);  
 
-    const unsigned w = 5;
-    const unsigned h = 5;
+    const unsigned w = 2;
+    const unsigned h = 2;
     float *K = new float[w * h];
 
     //random2d(K, w, h);
@@ -77,8 +77,11 @@ void more_complex_test()
     const unsigned Pw = (w - 1) * 2; 
     const unsigned Ph = (h - 1) * 2;
 
-    const unsigned Wy = Wx - w + Pw + 1;
-    const unsigned Hy = Hx - h + Ph + 1;
+    const unsigned Sw = 2;  // stride of 2 for width
+    const unsigned Sh = 3;  // stride of 3 for height
+
+    const unsigned Wy = (Wx - w + Pw + Sw) / Sw;
+    const unsigned Hy = (Hx - h + Ph + Sh) / Sh;
 
     float *Y = new float[Wy * Hy];
 
@@ -92,12 +95,12 @@ void more_complex_test()
     print2d<float>(K, w, h);
     std::cout << std::endl;
 
-    int iters = 100;
+    int iters = 1;
 
     gettimeofday(&start_clk, NULL); /// get the start time
 
     for (int i = 0; i < iters; i++)
-    corr2d0_v1<float, float, float>(X, Wx, Hx, K, w, h, Y, Pw, Ph, &flop);
+    corr2d0s_v2<float, float, float>(X, Wx, Hx, K, w, h, Y, Pw, Ph, Sw, Sh, &flop);
 
     gettimeofday(&end_clk, NULL); /// get the end time
 

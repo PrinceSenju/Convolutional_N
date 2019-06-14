@@ -32,6 +32,37 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
 /*
  * input: X - image, Hx, Wx - image size
           K - kernel, h, w - kernel size
+          Sw, Sh - stride size
+ * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+           flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned *flop) 
+{
+    unsigned row, col;
+    unsigned i, j;
+
+    unsigned Wy = Wx - w + 1;
+    unsigned Hy = Hx - h + 1;
+
+    *flop += Wy * Hy * w * h;
+
+    for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+            *(Y + row * Wy + col) = 0;
+            for (i = 0; i < h; i++) {
+                for (j = 0; j < w; j++) {  
+// modify me to add striding 
+		        *(Y + row * Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j));
+                }
+            }
+         }
+     }
+}
+
+/*
+ * input: X - image, Hx, Wx - image size
+          K - kernel, h, w - kernel size
           Pw, Ph - padding size
  * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
            flop - # of floating point operations
@@ -45,7 +76,7 @@ void  corr2d0_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
     unsigned Wy = Wx - w + Pw + 1;
     unsigned Hy = Hx - h + Ph + 1;
 
-    *flop += Wy * Hy * w * h; // think about??
+    *flop += Wy * Hy * w * h; // think about 0-padding
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
@@ -80,7 +111,7 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
     unsigned Wy = (Wx - w + Pw + Sw) / Sw;
     unsigned Hy = (Hx - h + Ph + Sh) / Sh;
 
-    *flop += Wy * Hy * w * h; // think about??
+    *flop += Wy * Hy * w * h; // think about 0-padding
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
@@ -95,8 +126,6 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
             }
          }
      }
-
-
 }
 
 
@@ -120,6 +149,28 @@ void corr2d0_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V 
 
     delete [] Z;
 }
+
+template <class T, class U, class V>
+void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop)
+{
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Wz * Hz];
+
+    unsigned row, col;
+
+    for (row = 0; row < Hx; row++ ) {  
+        for (col = 0; col < Wx; col++ ) {
+             *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col); 
+        }
+    }
+
+    corr2ds<T, U, V>(Z, Wz, Hz, K, w, h, Y, Sw, Sh, flop);
+
+    delete [] Z;
+}
+
 
 
 template <class T>
