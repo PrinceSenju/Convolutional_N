@@ -7,9 +7,9 @@
 template <class T, class U, class V>
 void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned *flop);
 
-// convolution + stride
+// convolution + stride (knowing padding size)
 template <class T, class U, class V>
-void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned *flop);
+void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop);
 
 // 0-padding no stride V1
 template <class T, class U, class V>

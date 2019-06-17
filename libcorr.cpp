@@ -37,7 +37,7 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned *flop) 
+void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
 {
     unsigned row, col;
     unsigned i, j;
@@ -166,7 +166,7 @@ void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
         }
     }
 
-    corr2ds<T, U, V>(Z, Wz, Hz, K, w, h, Y, Sw, Sh, flop);
+    corr2ds<T, U, V>(Z, Wz, Hz, K, w, h, Y, Pw, Ph, Sw, Sh, flop);
 
     delete [] Z;
 }
@@ -252,8 +252,8 @@ void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y,
             *(Y + row * Wy + col) = 0;
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {
-                        prow = Sh * row - Ph/2 + i;
-                        pcol = Sw * col - Pw/2 + j;
+                        int Prow = Sh * row - Ph/2 + i;
+                        int Pcol = Sw * col - Pw/2 + j;
 
 // modify me to add striding
                                 *(Y + row *Wy + col) += *(X + (Prow) * Wx + (Pcol)) * (*(K + i * w + j));
@@ -271,7 +271,7 @@ void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y,
 
 //add padding and stride
 template <class T, class U, class V>
-void corr2d0_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop)
+void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop)
 {
     unsigned Wz = (Wx - w + Pw + Sw) / Sw;
     unsigned Hz= (Hx - h + Ph + Sh) / Sh;
