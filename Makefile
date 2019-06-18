@@ -1,7 +1,7 @@
 src = test.cpp
 obj = $(src:.cpp=.o)
 
-CFLAGS = -Wall -std=c++1y
+CFLAGS = -Wall -std=c++1y -O0
 LDFLAGS = -lm 
 CC=g++
 
