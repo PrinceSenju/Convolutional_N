@@ -9,6 +9,10 @@
 template <class T, class U, class V>
 void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned *flop)
 {
+// step 1: apply column convolution: tmp <- input x col_kernel
+// step 2: apply row convolution: output <- tmp x row_kernel
+
+
 // implement me
 // find center position of kernel (half of kernel size)
 kCenterX = kCols / 2;
