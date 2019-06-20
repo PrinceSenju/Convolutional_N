@@ -12,6 +12,8 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 // step 1: apply column convolution: tmp <- input x col_kernel
 // step 2: apply row convolution: output <- tmp x row_kernel
 
+    *flop += cols * rows * kcol * h;
+
     for(j=0; j < cols; ++j)          // columns
     {
 	for(i=0; i < rows; ++i)     // rows
@@ -22,14 +24,12 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
        	     mm = kcol - 1 - m;      // row index of flipped kernel
      
             y[i] += x[i - j] * h[j]; // convolve: multiply and accumulate
-
+		*flop += cols * rows * kcol * h;
             }
         }
     }
 
-
 // implement me
-// find center position of kernel (half of kernel size)
 
 for(i=0; i < rows; ++i)              // rows
 {
@@ -47,7 +47,7 @@ for(i=0; i < rows; ++i)              // rows
         }
     }
 
-
+       
 }
 
 

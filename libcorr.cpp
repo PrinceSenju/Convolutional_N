@@ -17,7 +17,10 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
 
     *flop += Wy * Hy * w * h;
 
-// try swapping these two lines in place
+// Finished switching / swapping these two lines in place
+//for (col = 0;  col < Wy; col++) {
+//    for (row = 0; row < Hy; row++) {
+
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
             *(Y + row * Wy + col) = 0;
@@ -31,6 +34,7 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
 }
 
 /*
+
  * input: X - image, Hx, Wx - image size
           K - kernel, h, w - kernel size
           Sw, Sh - stride size
