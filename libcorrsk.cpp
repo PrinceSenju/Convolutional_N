@@ -12,42 +12,45 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 // step 1: apply column convolution: tmp <- input x col_kernel
 // step 2: apply row convolution: output <- tmp x row_kernel
 
-            unsigned rows, cols, kcol, krows, sum, mm;
-	    unsigned i, j, m;
-	   
+    unsigned row, col, krows, kcol, sum, mm;
+    unsigned i, j, m;
 
+    unsigned Wy = Wx - w + 1;
+    unsigned Hy = Hx - h + 1;
 
+    *flop += Wy * Hy * w * h;
+	V *Z = new V[Hx * Wx];
 
-    *flop += cols * rows * kcol * h;
-
-    for(j=0; j < cols; ++j)          // columns
-    {
-	for(i=0; i < rows; ++i)     // rows
-	{
+       for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+            *(Y + row * Wy + col) = 0;
 	  sum = 0;                 // init to 0 before sum
     	  for(m=0; m < kcol; ++m)     // kernel rows
           {
        	     mm = kcol - 1 - m;      // row index of flipped kernel
-     
-       int     y[i] += int x[i - j] * int  h[j]; // convolve: multiply and accumulate
-		*flop += cols * rows * kcol * h;
+
+            Z[i] += X[col * row + j] *  Kcol[j]; // convolve: multiply and accumulate
+
+
+ 	*flop += cols * rows * kcol * h;
             }
         }
     }
 
 // implement me
 
-for(i=0; i < rows; ++i)              // rows
-{
-    for(j=0; j < cols; ++j)          // columns
-    {
+
+    
+        for (col = 0;  col < Wy; col++) {
+          for (row = 0; row < Hy; row++) {    
+        *(Y + row * Wy + col) = 0;
         sum = 0;                     // init to 0 before sum
 
         for(m=0; m < krows; ++m)     // kernel rows
         {
             mm = krows - 1 - m;      // row index of flipped kernel
 
-     int       x[i] += int y[i - j] * int  h[j]; // convolve: multiply and accumulate
+            X[i] +=  Y[   ] *   krow[j]; // convolve: multiply and accumulate
 
             }
         }
