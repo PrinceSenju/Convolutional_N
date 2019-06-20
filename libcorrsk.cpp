@@ -12,11 +12,24 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 // step 1: apply column convolution: tmp <- input x col_kernel
 // step 2: apply row convolution: output <- tmp x row_kernel
 
+    for(j=0; j < cols; ++j)          // columns
+    {
+	for(i=0; i < rows; ++i)     // rows
+	{
+	  sum = 0;                 // init to 0 before sum
+    	  for(m=0; m < kcol; ++m)     // kernel rows
+          {
+       	     mm = kcol - 1 - m;      // row index of flipped kernel
+     
+            y[i] += x[i - j] * h[j]; // convolve: multiply and accumulate
+
+            }
+        }
+    }
+
 
 // implement me
 // find center position of kernel (half of kernel size)
-kCenterX = kCols / 2;
-kCenterY = kRows / 2;
 
 for(i=0; i < rows; ++i)              // rows
 {
@@ -26,23 +39,14 @@ for(i=0; i < rows; ++i)              // rows
 
         for(m=0; m < kRows; ++m)     // kernel rows
         {
-          horizontal  = kRows - 1 - m;      // row index of flipped kernel
+            mm = kRows - 1 - m;      // row index of flipped kernel
 
-            for(n=0; n < kCols; ++n) // kernel columns
-            {
-                vertical = kCols - 1 - n;  // column index of flipped kernel
+            x[i] += y[i - j] * h[j]; // convolve: multiply and accumulate
 
-                // index of input signal, used for checking boundary
-                ii = i + (m - kCenterY);
-                jj = j + (n - kCenterX);
-
-                // ignore input samples which are out of bound
-                if( ii >= 0 && ii < rows && jj >= 0 && jj < cols )
-                out[i][j] += in[ii][jj] * kernel[horizontal][ vertical];
             }
         }
     }
-}
+
 
 }
 
