@@ -122,18 +122,25 @@ void simple_test_sk()
     struct timeval start_clk, end_clk;
     double elapsed;
 
-    const unsigned Wx = 3;
-    const unsigned Hx = 3;
-    float X[3*3] = { 0, 1, 2,   3, 4, 5,   6, 7, 8 };
+    const unsigned Wx = 5;
+    const unsigned Hx = 5;
+    float *X = new float[Wx * Hx];
 
-    const unsigned w = 2;
-    const unsigned h = 2;
-    // float K[5*5] = { Wx, X, Hx};
-    float K[2*2] = { 0.0, 1.0,  2.0, 3.0 };
 
-    const unsigned Wy = Wx - w + 1;
-    const unsigned Hy = Hx - h + 1;
-    float Y[2*2];
+    //random2d<float>(X, Wx, Hx);
+    seq2d<float>(X, Wx, Hx);  
+
+    const unsigned w = 1;
+    const unsigned h = 3;
+    float *K = new float[w * h];
+
+
+    //random2d(K, w, h);
+    seq2d(K, w, h);
+
+    const unsigned Wz = Wx;
+    const unsigned Hz = Hx - h + 1;
+    float Y[5*5];
 
     unsigned flop = 0;
 
@@ -152,7 +159,7 @@ void simple_test_sk()
     gettimeofday(&end_clk, NULL); /// get the end time
 
     std::cout << "Output matrix: " << std::endl;
-    print2d<float>(Y, Wy, Hy);
+    print2d<float>(Y, Wz, Hz);
     std::cout << std::endl;
 
     //std::cout << "Start time: " << start_clk << std::endl;

@@ -12,7 +12,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 // step 1: apply column convolution: tmp <- input x col_kernel
 // step 2: apply row convolution: output <- tmp x row_kernel
 
-    unsigned row, col, krows, kcol, sum, mm;
+    unsigned row, col, krows, kcol, mm;
     unsigned i, j, m;
 
     unsigned Wz = Wx;
@@ -24,7 +24,6 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
        for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
-	                             // sum = 0; init to 0 before sum
     	  for(m=0; m < kcol; ++m)     // kernel rows
           {
             *(Z + row * Hz + col) += Kcol[m] * *(X + (row + m) * Hx + col);
@@ -35,16 +34,13 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 print2d(Z, Wz, Hz);
 /* implement me
 
-        for (col = 0;  col < Wy; col++) {
-          for (row = 0; row < Hy; row++) {
-        *(Z + row * Wy + col) = 0;
-                                      //  sum = 0;  init to 0 before sum
 
-        for(m=0; m < krows; ++m)     // kernel rows
-        {
-            *(Z + row * Hy + col += v[i] * X[row, i+col]); // convolve: multiply and accumulate
-            *(Y + (i + col) * Hy + row;
-
+        for (col = 0;  col < Wz; col++) {
+         for (row = 0; row < Hz; row++) {
+            *(Z + row * Wz + col) = 0;
+    	  for(m=0; m < krow; ++m)     // kernel rows
+          {
+            *(Z + col * Hz + row) += Krow[m] * *(X + (col + m) * Hx + row);
 
             }
         }
