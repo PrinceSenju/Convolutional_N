@@ -15,48 +15,42 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
     unsigned row, col, krows, kcol, sum, mm;
     unsigned i, j, m;
 
-    unsigned Wy = Wx - w + 1;
-    unsigned Hy = Hx - h + 1;
+    unsigned Wz = Wx;
+    unsigned Hz = Hx - h + 1;
 
-    *flop += Wy * Hy * w * h;
-	V *Z = new V[Hx * Wx];
+//    *flop += Wz * Hz * w * h;
+	V *Z = new V[Hz * Wz];
 
-       for (row = 0; row < Hy; row++) {
-        for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
-	  sum = 0;                 // init to 0 before sum
+       for (row = 0; row < Hz; row++) {
+        for (col = 0;  col < Wz; col++) {
+            *(Z + row * Wz + col) = 0;
+	                             // sum = 0; init to 0 before sum
     	  for(m=0; m < kcol; ++m)     // kernel rows
           {
-       	     mm = kcol - 1 - m;      // row index of flipped kernel
+            *(Z + row * Hz + col) += Kcol[m] * *(X + (row + m) * Hx + col);
 
-            Z[i] += X[col * row + j] *  Kcol[j]; // convolve: multiply and accumulate
-
-
- 	*flop += cols * rows * kcol * h;
             }
         }
     }
+print2d(Z, Wz, Hz);
+/* implement me
 
-// implement me
-
-
-    
         for (col = 0;  col < Wy; col++) {
-          for (row = 0; row < Hy; row++) {    
-        *(Y + row * Wy + col) = 0;
-        sum = 0;                     // init to 0 before sum
+          for (row = 0; row < Hy; row++) {
+        *(Z + row * Wy + col) = 0;
+                                      //  sum = 0;  init to 0 before sum
 
         for(m=0; m < krows; ++m)     // kernel rows
         {
-            mm = krows - 1 - m;      // row index of flipped kernel
+            *(Z + row * Hy + col += v[i] * X[row, i+col]); // convolve: multiply and accumulate
+            *(Y + (i + col) * Hy + row;
 
-            X[i] +=  Y[   ] *   krow[j]; // convolve: multiply and accumulate
 
             }
         }
     }
 
-       
+*/
 }
 
 
