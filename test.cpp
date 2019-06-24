@@ -134,6 +134,11 @@ void simple_test_sk()
     const unsigned h = 3;
     float *K = new float[w * h];
 
+   //random2d<float>(X, Wx, Hx);
+//   const unsigned we = 3;
+ //  const unsigned he = 1;
+//   float *K[w * h]
+
 
     //random2d(K, w, h);
     seq2d(K, w, h);
@@ -147,6 +152,10 @@ void simple_test_sk()
     std::cout << "Input matrix: " << std::endl;
     print2d<float>(X, Wx, Hx);
     std::cout << std::endl;
+
+  //  std::cout << "2kernel: " << std::ends;
+  //  print2d<float>(K, w, h);
+  //  std::cout << std::ends;
 
     std::cout << "Kernel: " << std::endl;
     print2d<float>(K, w, h);
