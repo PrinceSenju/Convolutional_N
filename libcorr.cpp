@@ -38,7 +38,7 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
  * input: X - image, Hx, Wx - image size
           K - kernel, h, w - kernel size
           Sw, Sh - stride size
- * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+ * output: Y - image of size ??
            flop - # of floating point operations
  */
 
@@ -71,7 +71,7 @@ void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y,
  * input: X - image, Hx, Wx - image size
           K - kernel, h, w - kernel size
           Pw, Ph - padding size
- * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+ * output: Y - image of size ??
            flop - # of floating point operations
  */
 template <class T, class U, class V>
@@ -106,7 +106,7 @@ void  corr2d0_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
           K - kernel, h, w - kernel size
           Pw, Ph - padding size
           Sw, Sh - stride size
- * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+ * output: Y - image of size ??
            flop - # of floating point operations
  */
 template <class T, class U, class V>

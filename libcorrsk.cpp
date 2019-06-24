@@ -8,56 +8,75 @@
 template <class T, class U, class V>
 void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned *flop)
 {
-// step 1: apply column convolution: tmp <- input x col_kernel
-// step 2: apply row convolution: output <- tmp x row_kernel
-
-    unsigned row, col, krow, kcol, mm;
-    unsigned i, j, m;
+    // step 1: apply column convolution: tmp <- input x col_kernel
+    unsigned row, col;
+    unsigned m;
 
     unsigned Wz = Wx;
     unsigned Hz = Hx - h + 1;
-//    *flop += Wz * Hz * w * h;
-	V *Z = new V[Hz * Wz];
 
-       for (row = 0; row < Hz; row++) {
+    *flop += Wz * Hz * h;
+
+    V *Z = new V[Hz * Wz];
+
+    for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
-    	  for(m=0; m < kcol; ++m)     // kernel rows
-          {
-            *(Z + row * Hz + col) += Kcol[m] * *(X + (row + m) * Hx + col);
-
+    	    for(m=0; m < h; m++) {     // kernel rows
+                *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
             }
         }
+     }
+
+    // step 2: apply row convolution: output <- tmp x row_kernel
+    unsigned Wy = Hx - w + 1;
+    unsigned Hy = Hx - h + 1;
+
+    *flop += Wy * Hy * w;
+
+    for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+             *(Y + row * Wy + col) = 0;
+             for(m=0; m < w; ++m) {     // kernel rows
+                 *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + col+m);
+             }
+         }
     }
-//print2d(Z, Wz, Hz);
-// implement me
 
-
-        for (col = 0;  col < Wz; col++) {
-         for (row = 0; row < Hz; row++) {
-            *(Z + col * Wz + row) = 0;
-    	  for(m=0; m < krow; ++m)     // kernel rows
-          {
-            *(Z + col * Hz + row) += Krow[m] * *(X + (col + m) * Hx + row);
-
-            }
-        }
-    }
-
-//
+    delete [] Z;
 }
 
 
-template <class T>
-void random1d(T *X, unsigned Wx)
+/*
+ * input: X - image, Hx, Wx - image size
+          Krow, Kcol - kernel, h, w - kernel size
+          Pw, Ph - padding size
+ * output: Y - image of size ??
+           flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
 {
-// implement me
+    // 0-padding is embedded in the calculation
+
+
 }
 
-template <class T>
-void seq1d(T *X, unsigned Wx)
+
+/*
+ * input: X - image, Hx, Wx - image size
+          Krow, Kcol - kernel, h, w - kernel size
+          Pw, Ph - padding size
+ * output: Y - image of size ??
+           flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
 {
-// implement me
+    // 0-padding is added and then corrSK is called
+
+
 }
+
 
 
