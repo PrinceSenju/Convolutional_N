@@ -193,8 +193,8 @@ void simple_test_2d()
     seq2d(Kcol, 1, h);
     seq2d(Krow, w, 1);
 
-    const unsigned Pw = (w - 1) * 2
-    const unsigned Ph = (h - 1) * 2
+    const unsigned Pw = (w - 1) * 2;
+    const unsigned Ph = (h - 1) * 2;
 
 
     const unsigned Hz = Hx - h + 1;
@@ -214,7 +214,10 @@ void simple_test_2d()
 
     gettimeofday(&start_clk, NULL); /// get the start time
 
-    for (int i = 0; i < iters; i++)
+    int iter = 1000;
+
+
+    for (int i = 0; i < iter; i++)
     corrSK<float, float, float>(X, Wx, Hx, Krow, Kcol, w, h, Y, &flop);
 
     gettimeofday(&end_clk, NULL); /// get the end time

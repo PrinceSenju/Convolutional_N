@@ -61,8 +61,8 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
     unsigned row, col;
     unsigned m;
 
-    unsigned Wz = Wx - w + pw + 1;
-    unsigned Hz = Hx - h + ph + 1;
+    unsigned Wz = Wx - w + Pw + 1;
+    unsigned Hz = Hx - h + Ph + 1;
 
     *flop += Wz * Hz * h;
 
@@ -81,8 +81,8 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
      }
 
     // step 2: apply row convolution: output <- tmp x row_kernel
-    unsigned Wy = Hx - w + pw + 1;
-    unsigned Hy = Hx - h + pw + 1;
+    unsigned Wy = Hx - w + Pw + 1;
+    unsigned Hy = Hx - h + Pw + 1;
 
     *flop += Wy * Hy * w;
 
