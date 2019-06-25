@@ -289,6 +289,15 @@ void more_complex_test_sk()
 
 }
 
+void more_complex_test_sks()
+{
+// implement striding
+
+
+}
+
+
+
 
 // include header function time and input
 int main() {
