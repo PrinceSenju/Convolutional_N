@@ -1,3 +1,4 @@
+//
 #include <stdio.h> 
 #include <sys/time.h>
 #include <unistd.h>
@@ -347,6 +348,10 @@ static void show_options(struct opts opt)
               << "\t-kh " << opt.h << "\n"
               << "\t-vs " << opt.Sh << "\n"
               << "\t-hs " << opt.Sw << "\n"
+              << "\t-p " << opt.p << "\n"
+              << "\t-k " << opt.ktype << "\n"
+              << "\t-m " << opt.kver << "\n"
+
 // need to finish
 
               << std::endl;
@@ -385,7 +390,12 @@ void run_test(struct opts opt)
               corr2d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          else
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
-    } 
+    }
+/*    else
+    {
+        std::cerr << "Unknown kernel type " << opt.ktype << std::endl;
+    }
+ */
     else if (opt.ktype == 2) // separable kernel
     {
          if (opt.kver == 1)
@@ -431,7 +441,7 @@ int main(int argc, char* argv[]) {
     opt.count = 1;
     opt.Wx = opt.Hx = 256;
     opt.h = opt.w = 3;
-    opt.p = false;
+    opt.p = true;
     opt.Sw = 1; opt.Sh = 1;
     opt.ktype = 1;
     opt.kver = 1;
@@ -478,11 +488,28 @@ int main(int argc, char* argv[]) {
                 return 1;
             }  
         }
-        if (std::string(argv[i]) == "-hs") {
+        if (std::string(argv[i]) == "-p") {
             if (i + 1 < argc) { 
-              opt.Sw = std::atoi(argv[++i]);
+              opt.p = std::atoi(argv[++i]);
             } else { 
-                std::cerr << "-hs option requires one argument." << std::endl;
+                std::cerr << "-p option requires one argument." << std::endl;
+                return 1;
+            }
+        }
+        if (std::string(argv[i]) == "-k") {
+            if (i + 1 < argc) { 
+              opt.ktype = std::atoi(argv[++i]);
+            } else { 
+                std::cerr << "-k option requires one argument." << std::endl;
+                return 1;
+            }  
+        }
+
+         if (std::string(argv[i]) == "-m") {
+            if (i + 1 < argc) { 
+              opt.kver = std::atoi(argv[++i]);
+            } else { 
+                std::cerr << "-m option requires one argument." << std::endl;
                 return 1;
             }  
         }
