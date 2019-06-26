@@ -59,14 +59,14 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 {
 
     unsigned row, col;
-    unsigned m;
+    //unsigned m;
 
     unsigned Wz = Wx - w + Pw + 1;
     unsigned Hz = Hx - h + Ph + 1;
 
     *flop += Wz * Hz * h;
 
-     V *Z = new V[Hz * Wz];
+    V *Z = new V[Hz * Wz];
 
     for (row = 0; row < Hx; row++ ) {
         for (col = 0; col < Wx; col++ ) {
@@ -74,7 +74,9 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
         }
     }
 
-   // corr2d<T, U, V>(Z, Wz, Hz, K, w, h, Y, flop);
+print2d<float>(Z, Wz, Hz);
+
+    corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
 
     delete [] Z;
 

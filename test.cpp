@@ -1,10 +1,12 @@
-//
+// ./test -x 5 -y 5 -kw 3 -kh 3 -vs 1 -hs 1 -k 2 -m 1 -c 1 -o -p
+
 #include <stdio.h> 
 #include <sys/time.h>
 #include <unistd.h>
 #include "libcorr.h"
 #include "libcorrsk.h"
 
+/*
 void simple_test() 
 {
     struct timeval start_clk, end_clk;
@@ -307,7 +309,7 @@ void more_complex_test_sks()
 
 
 }
-
+*/
 
 static void show_usage(std::string name)
 {
@@ -321,6 +323,7 @@ static void show_usage(std::string name)
               << "\t-vs <stride>\tSpecify the vertical striding\n"
               << "\t-hs <stride>\tSpecify the horizontal striding\n"
               << "\t-p \t\tSpecify to use 0 padding\n"
+              << "\t-o \t\tSpecify to output results\n"
               << "\t-k <kernel type>\tSpecify the kernel type: 1 for 2d kernel, 2 for separable kernel\n"
               << "\t-m <kernel model>\tSpecify the kernel model: 1 for direct and 2 for 0-pad first"
               << std::endl;
@@ -332,6 +335,7 @@ struct opts
     unsigned Wx, Hx;
     unsigned h, w;
     bool p;
+    bool output;
     unsigned Pw, Ph;
     unsigned Sw, Sh;
     unsigned ktype;
@@ -348,12 +352,12 @@ static void show_options(struct opts opt)
               << "\t-kh " << opt.h << "\n"
               << "\t-vs " << opt.Sh << "\n"
               << "\t-hs " << opt.Sw << "\n"
-              << "\t-p " << opt.p << "\n"
+              << "\t-vp " << opt.Ph << "\n"
+              << "\t-hp " << opt.Pw << "\n"
               << "\t-k " << opt.ktype << "\n"
               << "\t-m " << opt.kver << "\n"
-
-// need to finish
-
+              << "\t-c " << opt.count << "\n"
+              << "\t-o " << opt.output << "\n"
               << std::endl;
 }
 
@@ -382,37 +386,60 @@ void run_test(struct opts opt)
 
     if (opt.ktype == 1) // 2d kernel
     {
-         if (opt.kver == 1)
+         if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
               corr2d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
-         else if (opt.kver == 2)
+         } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
               corr2d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
-         else
+         } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
+             return;
+         }
     }
-/*    else
-    {
-        std::cerr << "Unknown kernel type " << opt.ktype << std::endl;
-    }
- */
     else if (opt.ktype == 2) // separable kernel
     {
-         if (opt.kver == 1)
+         if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
               corrSK0_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, /*opt.Sw, opt.Sh,*/ &flop);
-         else if (opt.kver == 2)
+         } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
               corrSK0_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, /*opt.Sw, opt.Sh,*/ &flop);
-         else
+         } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
+             return;
+         }
     }
-    else
-    {
+    else {
         std::cerr << "Unknown kernel type " << opt.ktype << std::endl;
+        return;
     }
 
     gettimeofday(&end_clk, NULL); /// get the start time
+
+    if (opt.output) {
+       std::cout << "Input matrix: " << std::endl;
+       print2d<float>(X, opt.Wx, opt.Hx);
+       std::cout << std::endl;
+
+       if (opt.ktype == 1) {
+          std::cout << "Kernel: " << std::endl;
+          print2d<float>(K, opt.w, opt.h);
+          std::cout << std::endl;
+       } else if (opt.ktype == 2) {
+          std::cout << "2 kernels: " << std::endl;
+          print2d<float>(Kcol, 1, opt.h);
+          print2d<float>(Krow, opt.w, 1);
+          std::cout << std::endl;
+       } else {
+           std::cerr << "Unknown kernel type " << opt.ktype << std::endl;
+           return; 
+       }
+
+       std::cout << "Output matrix: " << std::endl;
+       print2d<float>(Y, Wy, Hy);
+       std::cout << std::endl;
+    }
 
     std::cout << "Number of floating-point operations: " << flop << std::endl;    
     elapsed = (end_clk.tv_sec - start_clk.tv_sec) + (end_clk.tv_usec - start_clk.tv_usec) / 1000000.0;
@@ -438,10 +465,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // default options
     opt.count = 1;
     opt.Wx = opt.Hx = 256;
     opt.h = opt.w = 3;
-    opt.p = true;
+    opt.p = false;
+    opt.output = false;
     opt.Sw = 1; opt.Sh = 1;
     opt.ktype = 1;
     opt.kver = 1;
@@ -454,7 +483,7 @@ int main(int argc, char* argv[]) {
             } else { 
                 std::cerr << "-x option requires one argument." << std::endl;
                 return 1;
-            }  
+            }
         }
         if (std::string(argv[i]) == "-y") {
             if (i + 1 < argc) { 
@@ -488,13 +517,20 @@ int main(int argc, char* argv[]) {
                 return 1;
             }  
         }
-        if (std::string(argv[i]) == "-p") {
+        if (std::string(argv[i]) == "-hs") {
             if (i + 1 < argc) { 
-              opt.p = std::atoi(argv[++i]);
+              opt.Sw = std::atoi(argv[++i]);
             } else { 
-                std::cerr << "-p option requires one argument." << std::endl;
+                std::cerr << "-hs option requires one argument." << std::endl;
                 return 1;
-            }
+            }  
+        }
+
+        if (std::string(argv[i]) == "-p") {
+             opt.p = true;
+        }
+        if (std::string(argv[i]) == "-o") {
+             opt.output = true;
         }
         if (std::string(argv[i]) == "-k") {
             if (i + 1 < argc) { 
@@ -504,8 +540,7 @@ int main(int argc, char* argv[]) {
                 return 1;
             }  
         }
-
-         if (std::string(argv[i]) == "-m") {
+        if (std::string(argv[i]) == "-m") {
             if (i + 1 < argc) { 
               opt.kver = std::atoi(argv[++i]);
             } else { 
@@ -513,9 +548,14 @@ int main(int argc, char* argv[]) {
                 return 1;
             }  
         }
-
-// finish for -p, -k, -m, -c
-
+        if (std::string(argv[i]) == "-c") {
+            if (i + 1 < argc) { 
+              opt.count = std::atoi(argv[++i]);
+            } else { 
+                std::cerr << "-c option requires one argument." << std::endl;
+                return 1;
+            }  
+        }
     }
 
     // compute opt.Pw, opt.Ph if -p is true, or set then to 0 if -p is false
