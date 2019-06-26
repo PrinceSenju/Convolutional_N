@@ -242,8 +242,8 @@ void more_complex_test_sk()
     struct timeval start_clk, end_clk;
     double elapsed;
 
-    const unsigned Wx = 20;
-    const unsigned Hx = 20;
+    const unsigned Wx = 5;
+    const unsigned Hx = 5;
     float *X = new float[Wx * Hx];
 
 
@@ -252,13 +252,22 @@ void more_complex_test_sk()
 
     const unsigned w = 3;
     const unsigned h = 3;
-    float *K = new float[h * w];
 
-    seq2d(K, w, h);
 
-    const unsigned Hz = Hx - h + 1;
-    const unsigned Wz = Wx - w + 1;
-    float *Y = new float[Hz * Wz];
+    float *Kcol = new float[h];
+    float *Krow = new float [w];
+
+
+    seq2d(Kcol, 1, h);
+    seq2d(Krow, w, 1);
+
+    const unsigned Pw = (w - 1) * 2;
+    const unsigned Ph = (h - 1) * 2;
+
+
+    const unsigned Hy = Hx - h + Ph + 1;
+    const unsigned Wy = Wx - w + Pw + 1;
+    float *Y = new float[Hy * Wy];
 
     unsigned flop = 0;
 
@@ -266,18 +275,20 @@ void more_complex_test_sk()
     print2d<float>(X, Wx, Hx);
     std::cout << std::endl;
 
-    std::cout << "Kernel: " << std::endl;
-    print2d<float>(K, w, h);
+
+    std::cout << " 2 Kernels: " << std::endl;
+    print2d<float>(Kcol, 1, h);
+    print2d<float>(Krow, w, 1);
     std::cout << std::endl;
 
     gettimeofday(&start_clk, NULL); /// get the start time
 
-    corr2d<float, float, float>(X, Wx, Hx, K, w, h, Y, &flop);
+    corrSK0_v1<float, float, float>(X, Wx, Hx, Krow, Kcol, w, h, Y, Ph, Pw, &flop);
 
     gettimeofday(&end_clk, NULL); /// get the end time
 
     std::cout << "Output matrix: " << std::endl;
-    print2d<float>(Y, Wz, Hz);
+    print2d<float>(Y, Wy, Hy);
     std::cout << std::endl;
 
     //std::cout << "Start time: " << start_clk << std::endl;
@@ -302,16 +313,18 @@ void more_complex_test_sks()
 // include header function time and input
 int main() {
 
-    std::cout << "2D kernel" << std::endl;
-    simple_test_2d();
-    std::cout << std::endl;
+    //std::cout << "2D kernel" << std::endl;
+    //simple_test_2d();
+    //std::cout << std::endl;
 
-    std::cout << "Separable kernel" << std::endl;
-    simple_test_sk();
-    std::cout << std::endl;
+    //std::cout << "Separable kernel" << std::endl;
+    //simple_test_sk();
+    //std::cout << std::endl;
 
 
-    //more_complex_test();
+
+
+    more_complex_test_sk();
 
     return 0;
 }

@@ -57,6 +57,33 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 template <class T, class U, class V>
 void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
 {
+
+    unsigned row, col;
+    unsigned m;
+
+    unsigned Wz = Wx - w + Pw + 1;
+    unsigned Hz = Hx - h + Ph + 1;
+
+    *flop += Wz * Hz * h;
+
+     V *Z = new V[Hz * Wz];
+
+    unsigned row, col;
+
+    for (row = 0; row < Hx; row++ ) {
+        for (col = 0; col < Wx; col++ ) {
+             *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col);
+        }
+    }
+
+   // corr2d<T, U, V>(Z, Wz, Hz, K, w, h, Y, flop);
+
+    delete [] Z;
+
+
+
+
+/*
     // 0-padding is embedded in the calculation
     unsigned row, col;
     unsigned m;
@@ -101,8 +128,9 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 
     delete [] Z;
 
-
+*/
 }
+
 
 
 /*
