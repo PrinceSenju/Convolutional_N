@@ -68,8 +68,6 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 
      V *Z = new V[Hz * Wz];
 
-    unsigned row, col;
-
     for (row = 0; row < Hx; row++ ) {
         for (col = 0; col < Wx; col++ ) {
              *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col);
