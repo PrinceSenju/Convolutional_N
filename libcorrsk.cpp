@@ -2,7 +2,7 @@
 /* 
  * input: X - image, Hx, Wx - image size
           Krow, Kcol - kernel, h, w - kernel size
- * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+	 * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
            flop - # of floating point operations
  */
 template <class T, class U, class V>
@@ -23,7 +23,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel rows
-                *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
+                *(X + row * Wz + col) += Kcol[m] * *(Z + (row + m) * Wx + col);
             }
         }
      }
@@ -58,15 +58,17 @@ template <class T, class U, class V>
 void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
 {
 
-    unsigned row, col;
-    //unsigned m;
+unsigned Wz = Wx + Pw;
+unsigned Hz = Hx + Ph;
 
-    unsigned Wz = Wx - w + Pw + 1;
-    unsigned Hz = Hx - h + Ph + 1;
+  //  unsigned Wz = Wx - w + Pw + 1;
+  //  unsigned Hz = Hx - h + Ph + 1;
 
     *flop += Wz * Hz * h;
 
     V *Z = new V[Hz * Wz];
+
+    unsigned row, col;
 
     for (row = 0; row < Hx; row++ ) {
         for (col = 0; col < Wx; col++ ) {
@@ -74,6 +76,16 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
         }
     }
 
+    unsigned Wy = Wx - w + Pw;
+    unsigned Hy = Hx - h + Ph;
+
+    *flop += Wy * Hy * w;
+
+    for (row = 0; row < Hx; row++ ) {
+        for (col = 0; col < Wx; col++ ) {
+             *(Y + (row+Ph/2) * Hx + (col+Pw/2)) = *(Z + row * Hz + col);
+        }
+    }
 print2d<float>(Z, Wz, Hz);
 
     corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
