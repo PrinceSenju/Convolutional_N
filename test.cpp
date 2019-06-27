@@ -401,10 +401,10 @@ void run_test(struct opts opt)
     {
          if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK0_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, /*opt.Sw, opt.Sh,*/ &flop);
+              corrSK0s_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK0_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, /*opt.Sw, opt.Sh,*/ &flop);
+              corrSK0s_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
              return;

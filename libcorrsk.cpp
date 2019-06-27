@@ -22,8 +22,8 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
-    	    for(m=0; m < h; m++) {     // kernel rows
-                *(X + row * Wz + col) += Kcol[m] * *(Z + (row + m) * Wx + col);
+    	    for(m=0; m < h; m++) {     // kernel cols
+                *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
             }
         }
      }
@@ -57,90 +57,45 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 template <class T, class U, class V>
 void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
 {
-
-unsigned Wz = Wx + Pw;
-unsigned Hz = Hx + Ph;
-
-  //  unsigned Wz = Wx - w + Pw + 1;
-  //  unsigned Hz = Hx - h + Ph + 1;
-
-    *flop += Wz * Hz * h;
-
-    V *Z = new V[Hz * Wz];
-
-    unsigned row, col;
-
-    for (row = 0; row < Hx; row++ ) {
-        for (col = 0; col < Wx; col++ ) {
-             *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col);
-        }
-    }
-
-    unsigned Wy = Wx - w + Pw;
-    unsigned Hy = Hx - h + Ph;
-
-    *flop += Wy * Hy * w;
-
-    for (row = 0; row < Hx; row++ ) {
-        for (col = 0; col < Wx; col++ ) {
-             *(Y + (row+Ph/2) * Hx + (col+Pw/2)) = *(Z + row * Hz + col);
-        }
-    }
-print2d<float>(Z, Wz, Hz);
-
-    corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
-
-    delete [] Z;
-
-
-
-
-/*
-    // 0-padding is embedded in the calculation
-    unsigned row, col;
-    unsigned m;
-
-    unsigned Wz = Wx - w + Pw + 1;
+    unsigned Wz = Wx;
     unsigned Hz = Hx - h + Ph + 1;
 
     *flop += Wz * Hz * h;
 
     V *Z = new V[Hz * Wz];
 
+    unsigned row, col, m;
+
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
-    	    for(m=0; m < h; m++) {     // kernel rows
-		 int Prow = row - Ph/2 + m;
-	         int Pcol = col - Pw/2 + 0;
-         if (Prow >= 0 && Pcol >=0 && Prow < Hx && Pcol < Wx)
-          *(Z + row *Wz + col) += *(X + (Prow) * Wx + (Pcol)) * (*(Kcol + m * 1 + 0));
+    	    for(m=0; m < h; m++) {     // kernel cols
+                int Prow = row - Ph/2 + m;
+                if (Prow >= 0 && Prow < Hx) {
+                   *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
+                }
             }
         }
      }
 
-    // step 2: apply row convolution: output <- tmp x row_kernel
-    unsigned Wy = Hx - w + Pw + 1;
-    unsigned Hy = Hx - h + Pw + 1;
+    unsigned Wy = Wx - w + Pw + 1;
+    unsigned Hy = Hz;
 
     *flop += Wy * Hy * w;
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-             *(Y + row * Wy + col) = 0;
-             for(m=0; m < w; ++m) {
-	    int Prow = row - Ph/2 + 0;
-             int Pcol = col - Pw/2 + m;
-	       if (Prow >= 0 && Pcol >=0 && Prow < Hx && Pcol < Wx)
-                 *(Y + row * Wy + col) += Krow[m] * *(Z + Prow * Wz + Pcol);
-
-             }
-         }
-    }
+            *(Y + row * Wy + col) = 0;
+    	    for(m=0; m < w; m++) {     // kernel cols
+                int Pcol = col - Pw/2 + m;
+                if (Pcol >= 0 && Pcol < Wz) {
+                   *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + Pcol);
+                }
+            }
+        }
+     }
 
     delete [] Z;
-
-*/
 }
 
 
@@ -157,8 +112,127 @@ void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 {
     // 0-padding is added and then corrSK is called
 
+    // ./test -x 3 -y 3 -kw 2 -kh 2 -vs 1 -hs 1 -p -o -c 1 -k 2 -m 2
+    //  Output matrix: 
+    // 0 1 2 0 
+    // 3 4 5 0 
+    // 6 7 8 0 
+    // 0 0 0 0 
 
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Wz * Hz];
+
+    unsigned row, col;
+
+    for (row = 0; row < Hx; row++ ) {  
+        for (col = 0; col < Wx; col++ ) {
+             *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col); 
+        }
+    }
+
+    corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
 }
+
+
+
+////////////////////
+
+
+
+
+
+/*
+ * input: X - image, Hx, Wx - image size
+          Krow, Kcol - kernel, h, w - kernel size
+          Pw, Ph - padding size
+          Sw, Sh - stride size
+ * output: Y - image of size ??
+           flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
+{
+    unsigned Wz = Wx;
+    unsigned Hz = Hx - h + Ph + 1;
+
+    *flop += Wz * Hz * h;
+
+    V *Z = new V[Hz * Wz];
+
+    unsigned row, col, m;
+
+    for (row = 0; row < Hz; row++) {
+        for (col = 0;  col < Wz; col++) {
+            *(Z + row * Wz + col) = 0;
+    	    for(m=0; m < h; m++) {     // kernel cols
+                int Prow = row - Ph/2 + m;
+                if (Prow >= 0 && Prow < Hx) {
+                   *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
+                }
+            }
+        }
+     }
+
+    unsigned Wy = Wx - w + Pw + 1;
+    unsigned Hy = Hz;
+
+    *flop += Wy * Hy * w;
+
+    for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+            *(Y + row * Wy + col) = 0;
+    	    for(m=0; m < w; m++) {     // kernel cols
+                int Pcol = col - Pw/2 + m;
+                if (Pcol >= 0 && Pcol < Wz) {
+                   *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + Pcol);
+                }
+            }
+        }
+     }
+
+    delete [] Z;
+}
+
+
+
+/*
+ * input: X - image, Hx, Wx - image size
+          Krow, Kcol - kernel, h, w - kernel size
+          Pw, Ph - padding size
+          Sw, Sh - stride size
+ * output: Y - image of size ??
+           flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
+{
+    // 0-padding is added and then corrSK is called
+
+    // ./test -x 3 -y 3 -kw 2 -kh 2 -vs 1 -hs 1 -p -o -c 1 -k 2 -m 2
+    //  Output matrix: 
+    // 0 1 2 0 
+    // 3 4 5 0 
+    // 6 7 8 0 
+    // 0 0 0 0 
+
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Wz * Hz];
+
+    unsigned row, col;
+
+    for (row = 0; row < Hx; row++ ) {  
+        for (col = 0; col < Wx; col++ ) {
+             *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col); 
+        }
+    }
+
+    corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
+}
+
 
 
 
