@@ -154,20 +154,21 @@ void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 template <class T, class U, class V>
 void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
 {
-    unsigned Wz = Wx;
-    unsigned Hz = Hx - h + Ph + 1;
+   // unsigned Wz = Wx;
+   // unsigned Hz = Hx - h + Ph + 1;
 
+    unsigned Wz = Wx;
+    unsigned Hz = (Hx - h + Ph + Sh) / Sh;
+    unsigned row, col, m;
     *flop += Wz * Hz * h;
 
     V *Z = new V[Hz * Wz];
-
-    unsigned row, col, m;
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
-                int Prow = row - Ph/2 + m;
+                int Prow = Sh * row - Ph/2 + m;
                 if (Prow >= 0 && Prow < Hx) {
                    *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
                 }
@@ -175,8 +176,12 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
         }
      }
 
-    unsigned Wy = Wx - w + Pw + 1;
-    unsigned Hy = Hz;
+
+     unsigned Wy = (Wx - w + Pw + Sw) / Sw;
+     unsigned Hy = Hz;
+
+   // unsigned Wy = Wx - w + Pw + 1;
+  //  unsigned Hy = Hz;
 
     *flop += Wy * Hy * w;
 
@@ -184,7 +189,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
         for (col = 0;  col < Wy; col++) {
             *(Y + row * Wy + col) = 0;
     	    for(m=0; m < w; m++) {     // kernel cols
-                int Pcol = col - Pw/2 + m;
+                int Pcol = Sw * col - Pw/2 + m;
                 if (Pcol >= 0 && Pcol < Wz) {
                    *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + Pcol);
                 }
