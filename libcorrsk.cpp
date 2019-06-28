@@ -154,12 +154,11 @@ void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 template <class T, class U, class V>
 void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
 {
-   // unsigned Wz = Wx;
-   // unsigned Hz = Hx - h + Ph + 1;
-
     unsigned Wz = Wx;
     unsigned Hz = (Hx - h + Ph + Sh) / Sh;
+
     unsigned row, col, m;
+
     *flop += Wz * Hz * h;
 
     V *Z = new V[Hz * Wz];
@@ -176,12 +175,8 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
         }
      }
 
-
      unsigned Wy = (Wx - w + Pw + Sw) / Sw;
      unsigned Hy = Hz;
-
-   // unsigned Wy = Wx - w + Pw + 1;
-  //  unsigned Hy = Hz;
 
     *flop += Wy * Hy * w;
 
@@ -199,6 +194,55 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
 
     delete [] Z;
 }
+
+
+/* striding, but no 0-padding
+ * input: X - image, Hx, Wx - image size
+          Krow, Kcol - kernel, h, w - kernel size
+ * output: Y - image of size (Wx - w + 1) by (Hx - h + 1)
+          flop - # of floating point operations
+ */
+template <class T, class U, class V>
+void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned *flop)
+{
+    // step 1: apply column convolution: tmp <- input x col_kernel
+    unsigned row, col;
+    unsigned m;
+
+    unsigned Wz = Wx;
+    unsigned Hz = Hx - h + 1;
+
+    *flop += Wz * Hz * h;
+
+    V *Z = new V[Hz * Wz];
+
+    for (row = 0; row < Hz; row++) {
+        for (col = 0;  col < Wz; col++) {
+            *(Z + row * Wz + col) = 0;
+    	    for(m=0; m < h; m++) {     // kernel cols
+                *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
+            }
+        }
+     }
+
+    // step 2: apply row convolution: output <- tmp x row_kernel
+    unsigned Wy = Hx - w + 1;
+    unsigned Hy = Hx - h + 1;
+
+    *flop += Wy * Hy * w;
+
+    for (row = 0; row < Hy; row++) {
+        for (col = 0;  col < Wy; col++) {
+             *(Y + row * Wy + col) = 0;
+             for(m=0; m < w; ++m) {     // kernel rows
+                 *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + col+m);
+             }
+         }
+    }
+
+    delete [] Z;
+}
+
 
 
 
@@ -235,7 +279,7 @@ void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
         }
     }
 
-    corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
+    corrSKs<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
 }
 
 
