@@ -51,7 +51,7 @@ void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y,
     unsigned Wy = (Wx - w + Sw) / Sw;
     unsigned Hy = (Hx - h + Sh) / Sh;
 
-    *flop += Wy * Hy * w * h;  // ??
+    *flop += Wy * Hy * w * h;  
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
@@ -83,7 +83,7 @@ void  corr2d0_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
     unsigned Wy = Wx - w + Pw + 1;
     unsigned Hy = Hx - h + Ph + 1;
 
-    *flop += Wy * Hy * w * h; // think about 0-padding
+    *flop += Wy * Hy * w * h; // this is an overestimate, think about 0-padding; fixed with *flop -= 1;
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
@@ -92,8 +92,10 @@ void  corr2d0_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
                 for (j = 0; j < w; j++) {
                         int Prow = row - Ph/2 + i;
                         int Pcol = col - Pw/2 + j;
-                        if (Prow >= 0 && Pcol >=0 && Prow < Hx && Pcol < Wx)
+                        if (Prow >= 0 && Pcol >=0 && Prow < (int)Hx && Pcol < (int)Wx)
 			        *(Y + row *Wy + col) += *(X + (Prow) * Wx + (Pcol)) * (*(K + i * w + j));
+                        else
+                            *flop -= 1;
                 }
             }
          }
@@ -118,7 +120,7 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
     unsigned Wy = (Wx - w + Pw + Sw) / Sw;
     unsigned Hy = (Hx - h + Ph + Sh) / Sh;
 
-    *flop += Wy * Hy * w * h; // think about 0-padding
+    *flop += Wy * Hy * w * h; // this formula is not entirelly correct, think about 0-padding; fixed with *flop -= 1;
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
@@ -127,8 +129,10 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
                 for (j = 0; j < w; j++) {
                         int Prow = Sh * row - Ph/2 + i;
                         int Pcol = Sw * col - Pw/2 + j;
-                        if (Prow >= 0 && Pcol >=0 && Prow < Hx && Pcol < Wx)
+                        if (Prow >= 0 && Pcol >=0 && Prow < (int)Hx && Pcol < (int)Wx)
 			        *(Y + row *Wy + col) += *(X + (Prow) * Wx + (Pcol)) * (*(K + i * w + j));
+                        else
+                            *flop -= 1;
                 }
             }
          }
