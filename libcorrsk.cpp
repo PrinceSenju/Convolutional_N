@@ -207,10 +207,14 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
 {
     // step 1: apply column convolution: tmp <- input x col_kernel
     unsigned row, col;
-    unsigned m;
+    unsigned m, i, j; //should i replace either i or j with m ??
 
-    unsigned Wz = Wx;
-    unsigned Hz = Hx - h + 1;
+    unsigned Wz = (Wx - w + Sw) / Sw;
+    unsigned Hz = Hx;
+
+
+//    unsigned Wz = Wx;
+//    unsigned Hz = Hx - h + 1;
 
     *flop += Wz * Hz * h;
 
@@ -220,22 +224,29 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
         for (col = 0;  col < Wz; col++) {
             *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
-                *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
+		int Pcol = Sw * col;
+                *(Z + row * Wz + col) += Kcol[m] * *(X + row * Wx + Pcol);
+//						 *(X + (row + m) * Wx + col);
             }
         }
      }
 
     // step 2: apply row convolution: output <- tmp x row_kernel
-    unsigned Wy = Hx - w + 1;
-    unsigned Hy = Hx - h + 1;
+
+//    unsigned Wy = Hx - w + 1;
+//    unsigned Hy = Hx - h + 1;
+
+    unsigned Wy = Wz;
+    unsigned Hy = (Hx - h + Sh) / Sh;
 
     *flop += Wy * Hy * w;
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
              *(Y + row * Wy + col) = 0;
-             for(m=0; m < w; ++m) {     // kernel rows
-                 *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + col+m);
+             for(m=0; m < w; m++) {     // kernel rows
+               int Prow = Sh * row;
+	  *(Y + row * Wy + col) += Krow[m] * *(Z + Prow * Wz + col);
              }
          }
     }
