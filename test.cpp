@@ -176,7 +176,7 @@ void run_test(struct opts opt)
     const unsigned Hy = (opt.Hx - opt.h + opt.Ph + opt.Sh) / opt.Sh;
     float *Y = new float[Wy * Hy];
 
-    unsigned flop = 0;
+    unsigned long long flop = 0;
 
     struct timeval start_clk, end_clk;
     double elapsed;

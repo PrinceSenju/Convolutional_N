@@ -6,7 +6,7 @@
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned *flop)
+void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned long long *flop)
 {
     // step 1: apply column convolution: tmp <- input x col_kernel
     unsigned row, col;
@@ -55,7 +55,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
+void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned long long *flop) 
 {
     unsigned Wz = Wx;
     unsigned Hz = Hx - h + Ph + 1;
@@ -110,7 +110,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned *flop) 
+void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned long long *flop) 
 {
     // 0-padding is added and then corrSK is called
 
@@ -156,7 +156,7 @@ void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
+void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop) 
 {
     unsigned Wz = Wx;
     unsigned Hz = (Hx - h + Ph + Sh) / Sh;
@@ -209,7 +209,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
           flop - # of floating point operations
  */
 template <class T, class U, class V>
-void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned *flop)
+void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Sw, unsigned Sh, unsigned long long *flop)
 {
     unsigned Wz = Wx;
     unsigned Hz = (Hx - h + Sh) / Sh;
@@ -260,7 +260,7 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
            flop - # of floating point operations
  */
 template <class T, class U, class V>
-void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned *flop) 
+void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop) 
 {
     // 0-padding is added and then corrSK is called
 
