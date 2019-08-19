@@ -97,7 +97,7 @@ What should I say about the frameworks used? We just used nano cmd and deep lear
 <!-- GETTING STARTED -->
 ## Getting Started
 
-We dont need to install anything I believe.
+Create a make file (Optional). Download MXnet package/library
 
 ### Prerequisites
 
