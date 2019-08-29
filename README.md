@@ -92,7 +92,8 @@ What should I say about the frameworks used? We just used nano cmd and deep lear
 * [???](https://jquery.com)
 * [???](https://laravel.com)
 
-
+we worked in the nano cmd to develop and test out code. 
+our code is  written in C++ but can be written in other languages, for example python, which was the language we initially worked with. 
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -101,15 +102,21 @@ Create a make file (Optional). Download MXnet package/library
 
 ### Prerequisites
 
-Information from the deep learning book i beleive, thats it?
+Information from the deep learning book i believe,
 * nothing
 ```sh
 Need additional help with this section 
 ```
 
+
+
+A computer with enough ram memory to run nano
+Basic convolutional neural  networks knowledge
+
 ### Installation
 
 1. Should I insert the dive into deep learning book link? [https://example.com](https://example.com)
+ask Dr  Kindratenko about the book... personally I wouldn't add it, I would go through the book and write the steps we actually used becase the book is on python and our project is on C++
 2. Clone the repo
 ```sh
 git clone https://github.com/PrinceSenju/Convolutional_N.git
@@ -121,6 +128,9 @@ git clone https://github.com/PrinceSenju/Convolutional_N.git
 ## Usage
 
 Should I use this space to explain the features?
+maybe, it could refer to how to use the code and how to add stuff. maybe go through the parts and what they are for
+
+Keep this that you already added
 ```sh
 -c <count>      Specify the number of test iterations
         -x <width>      Specify the input image width
@@ -143,12 +153,12 @@ _Please add or tell me any additional information to add._
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
 
-
+i have no idea what this is
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -168,7 +178,7 @@ Information on the license? Distributed under the MIT License. See `LICENSE` for
 <!-- CONTACT -->
 ## Contact
 
-Professor contact info? - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Professor contact info? - [@your_twitter](https://twitter.com/your_username) - email@example.com ask him first
 
 Project Link: [https://github.com/Princesenju/Convolutional_N](https://github.com/your_username/repo_name)
 
