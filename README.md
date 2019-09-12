@@ -87,9 +87,7 @@ A list of commonly used resources that I find helpful are listed in the acknowle
 
 ### Built With
 What should I say about the frameworks used? We just used nano cmd and deep learning book..
-* [???](https://getbootstrap.com)
-* [???](https://jquery.com)
-* [???](https://laravel.com)
+* [C++](https://getbootstrap.com)
 
 we worked in the nano cmd to develop and test out code. 
 our code is  written in C++ but can be written in other languages, for example python, which was the language we initially worked with. 
@@ -101,10 +99,10 @@ Create a make file (Optional). Download MXnet package/library
 
 ### Prerequisites
 
-Information from the deep learning book i believe,
-* nothing
+Information from the deep learning book D2L
+* C++
 ```sh
-Need additional help with this section 
+Download MXnet package/library
 ```
 
 
@@ -114,7 +112,7 @@ Basic convolutional neural  networks knowledge
 
 ### Installation
 
-1. Should I insert the dive into deep learning book link? [https://example.com](https://example.com)
+1. Should I insert the dive into deep learning book link? [https://www.d2l.ai/](https://example.com)
 ask Dr  Kindratenko about the book... personally I wouldn't add it, I would go through the book and write the steps we actually used becase the book is on python and our project is on C++
 2. Clone the repo
 ```sh
