@@ -72,7 +72,6 @@
 
 [![ Implementation and Optimization in Convolution Operators in CNNs
 ][product-screenshot]] 
-(https://example.com)
 
 Computers see images differently than us. While we see an image of a white cat the computer see  2-dimensional array full of numbers, also known as pixels. Just like how a baby begins to understand shapes and pictures, is very similar to how algorithms are given several images to be able to conclude what is given to make predictions.The study of convolutional neural networks and the one component that many people are still trying to optimize is enhancing the performance of each kernel and the accuracy of each outcome to obtain a specific output. In the process, we will create multiple kernels to perform a complicated task like features such as striding and padding.  A popular key method we used was the implementation of different convolutional kernels and to measure their performance which is identified by the best performer. One of our expected outcomes is to have and identify the best performing kernel so after we implemented the kernels we see how such kernel works best as seen on the graph. People can now implement our library to integrate into existing neural network frameworks and this will result in training neural networks faster and those who use neural networks. We can now make this open-source so anyone who has a GitHub or even internet access may have access and inform open-source software community. It is imperative that we work on documenting the library implementation because we must give credit to whom credit is due.
 
