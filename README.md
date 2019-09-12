@@ -113,7 +113,6 @@ Basic convolutional neural  networks knowledge
 ### Installation
 
 1. Should I insert the dive into deep learning book link? [https://www.d2l.ai/](https://example.com)
-ask Dr  Kindratenko about the book... personally I wouldn't add it, I would go through the book and write the steps we actually used becase the book is on python and our project is on C++
 2. Clone the repo
 ```sh
 git clone https://github.com/PrinceSenju/Convolutional_N.git
@@ -124,10 +123,8 @@ git clone https://github.com/PrinceSenju/Convolutional_N.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Should I use this space to explain the features?
-maybe, it could refer to how to use the code and how to add stuff. maybe go through the parts and what they are for
+each commands has a specified action, for example -x <width> Specify the input image width of the CNN.
 
-Keep this that you already added
 ```sh
 -c <count>      Specify the number of test iterations
         -x <width>      Specify the input image width
@@ -141,8 +138,6 @@ Keep this that you already added
         -k <kernel type>        Specify the kernel type: 1 for 2d kernel, 2 for separable kernel
         -m <kernel model>       Specify the kernel model: 1 for direct and 2 for 0-pad first.
 ```
-_Please add or tell me any additional information to add._
-
 
 
 <!-- ROADMAP -->
@@ -150,7 +145,6 @@ _Please add or tell me any additional information to add._
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
 
-i have no idea what this is
 
 <!-- CONTRIBUTING -->
 ## Contributing
