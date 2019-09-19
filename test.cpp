@@ -27,14 +27,14 @@ static void show_usage(std::string name)
 
 struct opts 
 {
-    unsigned count;
-    unsigned Wx, Hx;
-    unsigned h, w;
-    bool p;
-    bool output;
-    unsigned Pw, Ph;
-    unsigned Sw, Sh;
-    unsigned ktype;
+    unsigned count; //test iterations
+    unsigned Wx, Hx; //image width, height
+    unsigned h, w; //kernel width, height
+    bool p; // Specify to use 0 padding
+    bool output; // to output results
+    unsigned Pw, Ph; // pading in width and height
+    unsigned Sw, Sh; //stride in width and height
+    unsigned ktype; 
     unsigned kver;
 };
 
@@ -55,17 +55,18 @@ static void show_options(struct opts opt)
 
 static bool get_options(int argc, char* argv[], struct opts &opt)
 {
+    std::cout << "get_options" << std::endl;
     // default options
     opt.count = 1;
     opt.Wx = opt.Hx = 256;
     opt.h = opt.w = 3;
-    opt.p = false;
-    opt.output = false;
-    opt.Sw = 1; opt.Sh = 1;
+    opt.p = false;  
+    opt.output = false; 
+    opt.Sw = 1; opt.Sh = 1; 
     opt.ktype = 1;
     opt.kver = 1;
-
-
+    
+    // assgin the structure with our inputs
     for (int i = 1; i < argc; i++) {
         if (std::string(argv[i]) == "-x") {
             if (i + 1 < argc) { 
@@ -150,8 +151,8 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
 
     // compute opt.Pw, opt.Ph if -p is true, or set then to 0 if -p is false
     if (opt.p) {
-       opt.Pw = (opt.w - 1) * 2; 
-       opt.Ph = (opt.h - 1) * 2;
+       opt.Pw = opt.Wx * opt.Sw + opt.w - opt.Wx - opt.Sw; 
+       opt.Ph = opt.Hx * opt.Sh + opt.h - opt.Hx - opt.Sh; 
     } else {
        opt.Pw = 0; 
        opt.Ph = 0;
@@ -162,16 +163,22 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
 
 void run_test(struct opts opt) 
 {
+    std::cout << "run_test " << std::endl;
     float *X = new float[opt.Wx * opt.Hx];
     seq2d<float>(X, opt.Wx, opt.Hx);  
 
     float *K = new float[opt.h * opt.w];
     float *Kcol = new float[opt.h];
     float *Krow = new float [opt.w];
+
+    // create a 2d array and
     seq2d(K, opt.w, opt.h);
     seq2d(Kcol, 1, opt.h);
     seq2d(Krow, opt.w, 1);
-
+    std::cout << "opt.Wx " << opt.Wx << std::endl;
+    std::cout << "opt.w " << opt.w << std::endl;
+    std::cout << "opt.Pw " << opt.Pw << std::endl;
+    std::cout << "opt.Ph " << opt.Ph << std::endl;
     const unsigned Wy = (opt.Wx - opt.w + opt.Pw + opt.Sw) / opt.Sw;
     const unsigned Hy = (opt.Hx - opt.h + opt.Ph + opt.Sh) / opt.Sh;
     float *Y = new float[Wy * Hy];

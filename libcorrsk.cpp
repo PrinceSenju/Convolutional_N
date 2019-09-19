@@ -44,6 +44,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
     }
 
     delete [] Z;
+    Z = nullptr;
 }
 
 
@@ -71,7 +72,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
             *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = row - Ph/2 + m;
-                if (Prow >= 0 && Prow < (int)Hx) 
+                if (Prow >= 0 && Prow < (int)Hx) //
                    *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
                 else
                    *flop -= 1;
@@ -98,6 +99,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
      }
 
     delete [] Z;
+    Z = nullptr;
 }
 
 
@@ -137,6 +139,7 @@ void  corrSK0_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
     corrSK<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, flop);
 
     delete [] Z;
+    Z = nullptr;
 }
 
 
@@ -199,6 +202,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
      }
 
     delete [] Z;
+    Z = nullptr;
 }
 
 
@@ -246,6 +250,7 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
      }
 
     delete [] Z;
+    Z = nullptr;
 }
 
 
@@ -287,6 +292,7 @@ void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
     corrSKs<T, U, V>(Z, Wz, Hz, Krow, Kcol, w, h, Y, Sw, Sh, flop);
 
     delete [] Z;
+    Z = nullptr;
 }
 
 

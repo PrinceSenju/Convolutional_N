@@ -159,6 +159,7 @@ void corr2d0_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V 
     corr2d<T, U, V>(Z, Wz, Hz, K, w, h, Y, flop);
 
     delete [] Z;
+    Z = nullptr;
 }
 
 template <class T, class U, class V>
@@ -180,9 +181,10 @@ void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
     corr2ds<T, U, V>(Z, Wz, Hz, K, w, h, Y, Pw, Ph, Sw, Sh, flop);
 
     delete [] Z;
+    Z = nullptr;
 }
 
-
+// printout 2d array
 
 template <class T>
 void print2d(T *X, unsigned Wx, unsigned Hx)
@@ -197,6 +199,8 @@ void print2d(T *X, unsigned Wx, unsigned Hx)
    }
 }
 
+// genetate a 2d array with random numbers
+
 template <class T>
 void random2d(T *X, unsigned Wx, unsigned Hx)
 {
@@ -206,6 +210,8 @@ void random2d(T *X, unsigned Wx, unsigned Hx)
      }
    }
 }
+
+// generate a 2d array with sequenced numbers
 
 template <class T>
 void seq2d(T *X, unsigned Wx, unsigned Hx)
