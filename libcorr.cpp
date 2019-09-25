@@ -184,6 +184,46 @@ void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
     Z = nullptr;
 }
 
+
+// Calculate convolutions with multiple inputs and outputs
+/*
+ * input: X - image, Nx, Hx, Wx - image size
+          K - kernel, Nx, n, h, w - kernel size
+          Pw, Ph - padding size
+          Sw, Sh - stride size
+ * output: Y - image of size n, Hx, Wx
+           flop - # of floating point operations
+ */
+//  something to point out:
+//  1. Since the kernel shape is Nx, n, h, w, the output should have n channels.
+
+template <class T, class U, class V>
+void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop)
+{
+    unsigned Nz = n; // the ouput channel
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Nz * Wz * Hz]; // the output
+
+    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+
+    for (ich = 0; ich < Nx; ich++ ) {
+        for (och = 0; och < Nz; och++ ) {
+            for (row = 0; row < Hx; row++ ) {  
+                for (col = 0; col < Wx; col++ ) {
+                    *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col); 
+                }
+            }
+        }
+    }
+
+    corr2d<T, U, V>(Z, Wz, Hz, K, w, h, Y, flop);
+
+    delete [] Z;
+    Z = nullptr;
+}
+
 // printout 2d array
 
 template <class T>

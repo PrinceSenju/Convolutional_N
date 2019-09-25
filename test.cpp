@@ -19,7 +19,7 @@ static void show_usage(std::string name)
               << "\t-vs <stride>\tSpecify the vertical striding\n"
               << "\t-hs <stride>\tSpecify the horizontal striding\n"
               << "\t-p \t\tSpecify to use 0 padding\n"
-              << "\t-o \t\tSpecify to output results\n"
+              << "\t-v \t\tSpecify to output results\n"
               << "\t-k <kernel type>\tSpecify the kernel type: 1 for 2d kernel, 2 for separable kernel\n"
               << "\t-m <kernel model>\tSpecify the kernel model: 1 for direct and 2 for 0-pad first"
               << std::endl;
@@ -49,7 +49,7 @@ static void show_options(struct opts opt)
               << "\tPadding: \t-vp " << opt.Ph << "\t-hp " << opt.Pw << "\n"
               << "\tKernel Type: \t\t-k " << opt.ktype << ((opt.ktype == 1) ? " - 2D" : " - Separable") << "\n"
               << "\tImplementation style:\t-m " << opt.kver << ((opt.kver== 1) ? " - inline" : " - external") << " 0-padding\n"
-              << "\tOutput: \t\t-o " << opt.output << ((opt.output) ? " - enabled" : " - disabled") << "\n"
+              << "\tOutput: \t\t-v " << opt.output << ((opt.output) ? " - enabled" : " - disabled") << "\n"
               << std::endl;
 }
 
@@ -120,7 +120,7 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
         if (std::string(argv[i]) == "-p") {
              opt.p = true;
         }
-        if (std::string(argv[i]) == "-o") {
+        if (std::string(argv[i]) == "-v") {
              opt.output = true;
         }
         if (std::string(argv[i]) == "-k") {
