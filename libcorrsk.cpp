@@ -21,7 +21,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            *(Z + row * Wz + col) = 0;
+            // *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
             }
@@ -36,7 +36,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-             *(Y + row * Wy + col) = 0;
+             // *(Y + row * Wy + col) = 0;
              for(m=0; m < w; ++m) {     // kernel rows
                  *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + col+m);
              }
@@ -69,7 +69,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            *(Z + row * Wz + col) = 0;
+            // *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = row - Ph/2 + m;
                 if (Prow >= 0 && Prow < (int)Hx) //
@@ -87,7 +87,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0;
     	    for(m=0; m < w; m++) {     // kernel cols
                 int Pcol = col - Pw/2 + m;
                 if (Pcol >= 0 && Pcol < (int)Wz)
@@ -172,7 +172,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            *(Z + row * Wz + col) = 0;
+            // *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = Sh * row - Ph/2 + m;
                 if (Prow >= 0 && Prow < (int)Hx) 
@@ -190,7 +190,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0;
     	    for(m=0; m < w; m++) {     // kernel cols
                 int Pcol = Sw * col - Pw/2 + m;
                 if (Pcol >= 0 && Pcol < (int)Wz) 
@@ -226,7 +226,7 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            *(Z + row * Wz + col) = 0;
+            // *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = Sh * row + m;
                 *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
@@ -241,7 +241,7 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0;
     	    for(m=0; m < w; m++) {     // kernel cols
                 int Pcol = Sw * col + m;
                 *(Y + row * Wy + col) += Krow[m] * *(Z + row * Wz + Pcol);
