@@ -27,6 +27,14 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
 template <class T, class U, class V>
 void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop);
 
+// 3d 0-padding + stride V1
+template <class T, class U, class V>
+void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop);
+
+// 3d 0-padding + stride V2
+template <class T, class U, class V>
+void corr3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop);
+
 template <class T>
 void print2d(T *X, unsigned Wx, unsigned Hx);
 

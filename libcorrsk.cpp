@@ -295,6 +295,61 @@ void  corrSK0s_v2(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
     Z = nullptr;
 }
 
+// Calculate convolutions with multiple inputs and outputs
+/*
+ * input: X - image, Nx, Hx, Wx - image size
+          Krow - kernel, n, Nx, w - kernel size
+          Kcol - kernel, n, Nx, h - kernel size
+          Pw, Ph - padding size
+          Sw, Sh - stride size
+ * output: Y - image of size n, Hx, Wx
+           flop - # of floating point operations
+ */
+//  something to point out:
+//  1. Since the kernel shape is Nx, n, h, w, the output should have n channels.
+//  2. I assume all "unsigned"s take 1 byte in the memory
+
+template <class T, class U, class V>
+void corrSK3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop)
+{
+    unsigned Nz = n; // the ouput channel
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Nz * Wz * Hz]; // the output
+
+    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+
+    for (och = 0; och < Nz; och++ ) {
+        for (ich = 0; ich < Nx; ich++ ) {
+            corrSK0s_v1((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+        }
+    }
+
+    delete [] Z;
+    Z = nullptr;
+}
+
+template <class T, class U, class V>
+void corrSK3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop)
+{
+    unsigned Nz = n; // the ouput channel
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Nz * Wz * Hz]; // the output
+
+    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+
+    for (och = 0; och < Nz; och++ ) {
+        for (ich = 0; ich < Nx; ich++ ) {
+            corrSK0s_v2((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+        }
+    }
+
+    delete [] Z;
+    Z = nullptr;
+}
 
 
 

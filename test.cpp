@@ -1,4 +1,4 @@
-// ./test -x 5 -y 5 -kw 3 -kh 3 -vs 1 -hs 1 -k 2 -m 1 -c 1 -o -p
+// ./test -x 5 -y 5 -kw 3 -kh 3 -vs 1 -hs 1 -k 2 -m 1 -c 1 -v -p
 
 #include <stdio.h> 
 #include <sys/time.h>
@@ -22,6 +22,8 @@ static void show_usage(std::string name)
               << "\t-v \t\tSpecify to output results\n"
               << "\t-k <kernel type>\tSpecify the kernel type: 1 for 2d kernel, 2 for separable kernel\n"
               << "\t-m <kernel model>\tSpecify the kernel model: 1 for direct and 2 for 0-pad first"
+              << "\t-i <multiple input model>\tSpecify the number of input channels\n"
+              << "\t-o <multiple output model>\tSpecify the number of output channels\n"
               << std::endl;
 }
 
@@ -36,6 +38,8 @@ struct opts
     unsigned Sw, Sh; //stride in width and height
     unsigned ktype; 
     unsigned kver;
+    unsigned Nx; //# of input channels
+    unsigned n; //# of output channels
 };
 
 
@@ -50,6 +54,8 @@ static void show_options(struct opts opt)
               << "\tKernel Type: \t\t-k " << opt.ktype << ((opt.ktype == 1) ? " - 2D" : " - Separable") << "\n"
               << "\tImplementation style:\t-m " << opt.kver << ((opt.kver== 1) ? " - inline" : " - external") << " 0-padding\n"
               << "\tOutput: \t\t-v " << opt.output << ((opt.output) ? " - enabled" : " - disabled") << "\n"
+              << "\tNumber of input channels: \t-i " << opt.Nx << "\n"
+              << "\tNumber of output channels: \t-o " << opt.n << "\n"
               << std::endl;
 }
 
@@ -65,6 +71,8 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
     opt.Sw = 1; opt.Sh = 1; 
     opt.ktype = 1;
     opt.kver = 1;
+    opt.Nx = 1;
+    opt.n = 1;
     
     // assgin the structure with our inputs
     for (int i = 1; i < argc; i++) {
@@ -147,6 +155,22 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
                 return false;
             }  
         }
+        if (std::string(argv[i]) == "-i") {
+            if (i + 1 < argc) { 
+              opt.Nx = std::atoi(argv[++i]);
+            } else { 
+                std::cerr << "-i option requires one argument." << std::endl;
+                return false;
+            }  
+        }
+        if (std::string(argv[i]) == "-o") {
+            if (i + 1 < argc) { 
+              opt.n = std::atoi(argv[++i]);
+            } else { 
+                std::cerr << "-o option requires one argument." << std::endl;
+                return false;
+            }  
+        }
     }
 
     // compute opt.Pw, opt.Ph if -p is true, or set then to 0 if -p is false
@@ -164,24 +188,25 @@ static bool get_options(int argc, char* argv[], struct opts &opt)
 void run_test(struct opts opt) 
 {
     std::cout << "run_test " << std::endl;
-    float *X = new float[opt.Wx * opt.Hx];
-    seq2d<float>(X, opt.Wx, opt.Hx);  
+    float *X = new float[opt.Nx * opt.Wx * opt.Hx];
+    seq3d<float>(X, opt.Wx, opt.Hx);  
 
-    float *K = new float[opt.h * opt.w];
-    float *Kcol = new float[opt.h];
-    float *Krow = new float [opt.w];
+    float *K = new float[opt.n * opt.Nx * opt.h * opt.w];
+    float *Kcol = new float[opt. n* opt.Nx * opt.h];
+    float *Krow = new float [opt.n * opt.Nx * opt.w];
 
     // create a 2d array and
-    seq2d(K, opt.w, opt.h);
-    seq2d(Kcol, 1, opt.h);
-    seq2d(Krow, opt.w, 1);
+    seq3d(K, opt.w, opt.h);
+    seq3d(Kcol, 1, opt.h);
+    seq3d(Krow, opt.w, 1);
     std::cout << "opt.Wx " << opt.Wx << std::endl;
     std::cout << "opt.w " << opt.w << std::endl;
     std::cout << "opt.Pw " << opt.Pw << std::endl;
     std::cout << "opt.Ph " << opt.Ph << std::endl;
     const unsigned Wy = (opt.Wx - opt.w + opt.Pw + opt.Sw) / opt.Sw;
     const unsigned Hy = (opt.Hx - opt.h + opt.Ph + opt.Sh) / opt.Sh;
-    float *Y = new float[Wy * Hy];
+    float *Y = new float[opt.n * Wy * Hy]; 
+    // we have to change Y when testing with multiple inputs and outputs
 
     unsigned long long flop = 0;
 
@@ -194,10 +219,10 @@ void run_test(struct opts opt)
     {
          if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
-              corr2d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corr3d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
-              corr2d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corr3d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
              return;
@@ -207,10 +232,10 @@ void run_test(struct opts opt)
     {
          if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK0s_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corrSK3d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK0s_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corrSK3d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
              return;
@@ -225,17 +250,17 @@ void run_test(struct opts opt)
 
     if (opt.output) {
        std::cout << "Input matrix: " << std::endl;
-       print2d<float>(X, opt.Wx, opt.Hx);
+       print4d<float>(X, 1, opt.Nx, opt.Wx, opt.Hx);
        std::cout << std::endl;
 
        if (opt.ktype == 1) {
           std::cout << "Kernel: " << std::endl;
-          print2d<float>(K, opt.w, opt.h);
+          print4d<float>(K, opt.n, opt.Nx, opt.w, opt.h);
           std::cout << std::endl;
        } else if (opt.ktype == 2) {
           std::cout << "2 kernels: " << std::endl;
-          print2d<float>(Kcol, 1, opt.h);
-          print2d<float>(Krow, opt.w, 1);
+          print4d<float>(Kcol, opt.n, opt.Nx, 1, opt.h);
+          print4d<float>(Krow, opt.n, opt.Nx, opt.w, 1);
           std::cout << std::endl;
        } else {
            std::cerr << "Unknown kernel type " << opt.ktype << std::endl;
@@ -243,7 +268,7 @@ void run_test(struct opts opt)
        }
 
        std::cout << "Output matrix: " << std::endl;
-       print2d<float>(Y, Wy, Hy);
+       print4d<float>(Y, opt.n, 1, Wy, Hy);
        std::cout << std::endl;
     }
 

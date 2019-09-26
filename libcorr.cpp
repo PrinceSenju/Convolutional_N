@@ -26,7 +26,7 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
             *(Y + row * Wy + col) = 0;
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {  
-		        *(Y + row * Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j));
+		        *(Y + row * Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j)); // += so that we could run
                 }
             }
          }
@@ -188,7 +188,7 @@ void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
 // Calculate convolutions with multiple inputs and outputs
 /*
  * input: X - image, Nx, Hx, Wx - image size
-          K - kernel, Nx, n, h, w - kernel size
+          K - kernel, n, Nx, h, w - kernel size
           Pw, Ph - padding size
           Sw, Sh - stride size
  * output: Y - image of size n, Hx, Wx
@@ -196,6 +196,7 @@ void corr2d0s_v2(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
  */
 //  something to point out:
 //  1. Since the kernel shape is Nx, n, h, w, the output should have n channels.
+//  2. I assume all "unsigned"s take 1 byte in the memory
 
 template <class T, class U, class V>
 void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop)
@@ -208,17 +209,32 @@ void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n,
 
     unsigned ich, och, row, col; // input channels, output channels, rows and columns
 
-    for (ich = 0; ich < Nx; ich++ ) {
-        for (och = 0; och < Nz; och++ ) {
-            for (row = 0; row < Hx; row++ ) {  
-                for (col = 0; col < Wx; col++ ) {
-                    *(Z + (row+Ph/2) * Wz + (col+Pw/2)) = *(X + row * Wx + col); 
-                }
-            }
+    for (och = 0; och < Nz; och++ ) {
+        for (ich = 0; ich < Nx; ich++ ) {
+            corr2d0s_v1((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
         }
     }
 
-    corr2d<T, U, V>(Z, Wz, Hz, K, w, h, Y, flop);
+    delete [] Z;
+    Z = nullptr;
+}
+
+template <class T, class U, class V>
+void corr3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n, unsigned w, unsigned h, V *Y, unsigned Pw, unsigned Ph, unsigned Sw, unsigned Sh, unsigned long long *flop)
+{
+    unsigned Nz = n; // the ouput channel
+    unsigned Wz = Wx + Pw;
+    unsigned Hz = Hx + Ph;
+
+    T *Z = new float[Nz * Wz * Hz]; // the output
+
+    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+
+    for (och = 0; och < Nz; och++ ) {
+        for (ich = 0; ich < Nx; ich++ ) {
+            corr2d0s_v2((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+        }
+    }
 
     delete [] Z;
     Z = nullptr;
@@ -237,6 +253,20 @@ void print2d(T *X, unsigned Wx, unsigned Hx)
       }
       std::cout << std::endl;
    }
+}
+
+// printout 3d array
+template <class T>
+void print4d(T *X, unsigned n, unsigned Nx, unsigned Wx, unsigned Hx)
+{
+    unsigned x, y;
+    for (x = 0; x < n; x++) {
+        for (y = 0; y < Nx; y++) {
+            print2d((X + x*Nx*Wx*Hx + z*Wx*Hx), Wx, Hx);
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 // genetate a 2d array with random numbers
@@ -265,4 +295,16 @@ void seq2d(T *X, unsigned Wx, unsigned Hx)
    }
 }
 
+template <class T>
+void seq3d(T *X, unsigned Nx, unsigned Wx, unsigned Hx)
+{
+    T val = 0;
+    for (unsigned z = 0; z < Nx; z++) {
+        for (unsigned y = 0; y < Hx; y++) {
+            for (unsigned x = 0; x < Wx; x++) { 
+                *(X+z*Wx*Hx+y*Wx+x) =  val++; 
+            }
+        }
+    }
+}
 
