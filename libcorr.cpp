@@ -23,7 +23,7 @@ void corr2d(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y, 
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0; // don't set it to 0 because the value in the output is a sum in multi-channel
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {  
 		        *(Y + row * Wy + col) += *(X + (row + i) * Wx + (col + j)) * (*(K + i * w + j)); // += so that we could run
@@ -55,7 +55,7 @@ void corr2ds(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V *Y,
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0; // don't set it to 0 because the value in the output is a sum in multi-channel
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {
                         int Prow = Sh * row + i;
@@ -87,7 +87,7 @@ void  corr2d0_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, V
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0; // don't set it to 0 because the value in the output is a sum in multi-channel
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {
                         int Prow = row - Ph/2 + i;
@@ -124,7 +124,7 @@ void  corr2d0s_v1(T *X, unsigned Wx, unsigned Hx, U *K, unsigned w, unsigned h, 
 
     for (row = 0; row < Hy; row++) {
         for (col = 0;  col < Wy; col++) {
-            *(Y + row * Wy + col) = 0;
+            // *(Y + row * Wy + col) = 0; // don't set it to 0 because the value in the output is a sum in multi-channel
             for (i = 0; i < h; i++) {
                 for (j = 0; j < w; j++) {
                         int Prow = Sh * row - Ph/2 + i;
@@ -255,7 +255,7 @@ void print2d(T *X, unsigned Wx, unsigned Hx)
    }
 }
 
-// printout 3d array
+// printout 4d array
 template <class T>
 void print4d(T *X, unsigned n, unsigned Nx, unsigned Wx, unsigned Hx)
 {
@@ -263,10 +263,11 @@ void print4d(T *X, unsigned n, unsigned Nx, unsigned Wx, unsigned Hx)
     for (x = 0; x < n; x++) {
         for (y = 0; y < Nx; y++) {
             print2d((X + x*Nx*Wx*Hx + y*Wx*Hx), Wx, Hx);
+            std::cout << std::endl;
         }
         std::cout << std::endl;
     }
-    std::cout << std::endl;
+    
 }
 
 // genetate a 2d array with random numbers
