@@ -21,7 +21,7 @@ static void show_usage(std::string name)
               << "\t-p \t\tSpecify to use 0 padding\n"
               << "\t-v \t\tSpecify to output results\n"
               << "\t-k <kernel type>\tSpecify the kernel type: 1 for 2d kernel, 2 for separable kernel\n"
-              << "\t-m <kernel model>\tSpecify the kernel model: 1 for direct and 2 for 0-pad first"
+              << "\t-m <kernel model>\tSpecify the kernel model: 1 for direct and 2 for 0-pad first\n"
               << "\t-i <multiple input model>\tSpecify the number of input channels\n"
               << "\t-o <multiple output model>\tSpecify the number of output channels\n"
               << std::endl;
@@ -189,16 +189,16 @@ void run_test(struct opts opt)
 {
     std::cout << "run_test " << std::endl;
     float *X = new float[opt.Nx * opt.Wx * opt.Hx];
-    seq3d<float>(X, opt.Wx, opt.Hx);  
+    seq3d<float>(X, opt.Nx, opt.Wx, opt.Hx);  
 
     float *K = new float[opt.n * opt.Nx * opt.h * opt.w];
     float *Kcol = new float[opt. n* opt.Nx * opt.h];
     float *Krow = new float [opt.n * opt.Nx * opt.w];
 
     // create a 2d array and
-    seq3d(K, opt.w, opt.h);
-    seq3d(Kcol, 1, opt.h);
-    seq3d(Krow, opt.w, 1);
+    seq3d(K, opt.Nx * opt.n, opt.w, opt.h);
+    seq3d(Kcol, opt.Nx * opt.n, 1, opt.h);
+    seq3d(Krow, opt.Nx * opt.n, opt.w, 1);
     std::cout << "opt.Wx " << opt.Wx << std::endl;
     std::cout << "opt.w " << opt.w << std::endl;
     std::cout << "opt.Pw " << opt.Pw << std::endl;
@@ -219,10 +219,10 @@ void run_test(struct opts opt)
     {
          if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
-              corr3d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corr3d0s_v1<float, float, float>(X, opt.Nx, opt.Wx, opt.Hx, K, opt.n, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
-              corr3d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, K, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corr3d0s_v2<float, float, float>(X, opt.Nx, opt.Wx, opt.Hx, K, opt.n, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
              return;
@@ -232,10 +232,10 @@ void run_test(struct opts opt)
     {
          if (opt.kver == 1) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK3d0s_v1<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corrSK3d0s_v1<float, float, float>(X, opt.Nx, opt.Wx, opt.Hx, Krow, Kcol, opt.n, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else if (opt.kver == 2) {
               for (unsigned i = 0; i < opt.count; i++)
-              corrSK3d0s_v2<float, float, float>(X, opt.Wx, opt.Hx, Krow, Kcol, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
+              corrSK3d0s_v2<float, float, float>(X, opt.Nx, opt.Wx, opt.Hx, Krow, Kcol, opt.n, opt.w, opt.h, Y, opt.Pw, opt.Ph, opt.Sw, opt.Sh, &flop);
          } else {
              std::cerr << "Unknown kernel version " << opt.kver << std::endl;
              return;

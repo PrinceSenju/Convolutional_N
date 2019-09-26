@@ -44,6 +44,8 @@ void random2d(T *X, unsigned Wx, unsigned Hx);
 template <class T>
 void seq2d(T *X, unsigned Wx, unsigned Hx);
 
+template <class T>
+void seq3d(T *X, unsigned Nx, unsigned Wx, unsigned Hx);
 
 #include "libcorr.cpp"
 

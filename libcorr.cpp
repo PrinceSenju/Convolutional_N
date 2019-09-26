@@ -207,11 +207,11 @@ void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n,
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
-    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+    unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
         for (ich = 0; ich < Nx; ich++ ) {
-            corr2d0s_v1((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+            corr2d0s_v1((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, flop);
         }
     }
 
@@ -228,11 +228,11 @@ void corr3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n,
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
-    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+    unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
         for (ich = 0; ich < Nx; ich++ ) {
-            corr2d0s_v2((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+            corr2d0s_v2((X + ich*Hx*Wx), Wx, Hx, (K + och*Nx*w*h + ich*w*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, flop);
         }
     }
 
@@ -262,7 +262,7 @@ void print4d(T *X, unsigned n, unsigned Nx, unsigned Wx, unsigned Hx)
     unsigned x, y;
     for (x = 0; x < n; x++) {
         for (y = 0; y < Nx; y++) {
-            print2d((X + x*Nx*Wx*Hx + z*Wx*Hx), Wx, Hx);
+            print2d((X + x*Nx*Wx*Hx + y*Wx*Hx), Wx, Hx);
         }
         std::cout << std::endl;
     }

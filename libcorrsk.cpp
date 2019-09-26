@@ -318,11 +318,11 @@ void corrSK3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kco
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
-    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+    unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
         for (ich = 0; ich < Nx; ich++ ) {
-            corrSK0s_v1((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+            corrSK0s_v1((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, flop);
         }
     }
 
@@ -339,11 +339,11 @@ void corrSK3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kco
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
-    unsigned ich, och, row, col; // input channels, output channels, rows and columns
+    unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
         for (ich = 0; ich < Nx; ich++ ) {
-            corrSK0s_v2((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, *flop);
+            corrSK0s_v2((X + ich*Hx*Wx), Wx, Hx, (Krow + och*Nx*w + ich*w), (Kcol + och*Nx*h + ich*h), w, h, (Y + och*Wx*Hx), Pw, Ph, Sw, Sh, flop);
         }
     }
 
