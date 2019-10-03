@@ -21,7 +21,7 @@ void corrSK(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsign
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            // *(Z + row * Wz + col) = 0;
+            *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 *(Z + row * Wz + col) += Kcol[m] * *(X + (row + m) * Wx + col);
             }
@@ -69,7 +69,7 @@ void  corrSK0_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, u
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            // *(Z + row * Wz + col) = 0;
+            *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = row - Ph/2 + m;
                 if (Prow >= 0 && Prow < (int)Hx) //
@@ -172,7 +172,7 @@ void  corrSK0s_v1(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, 
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            // *(Z + row * Wz + col) = 0;
+            *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = Sh * row - Ph/2 + m;
                 if (Prow >= 0 && Prow < (int)Hx) 
@@ -226,7 +226,7 @@ void corrSKs(T *X, unsigned Wx, unsigned Hx, U *Krow, U *Kcol, unsigned w, unsig
 
     for (row = 0; row < Hz; row++) {
         for (col = 0;  col < Wz; col++) {
-            // *(Z + row * Wz + col) = 0;
+            *(Z + row * Wz + col) = 0;
     	    for(m=0; m < h; m++) {     // kernel cols
                 int Prow = Sh * row + m;
                 *(Z + row * Wz + col) += Kcol[m] * *(X + Prow * Wx + col);
@@ -318,6 +318,9 @@ void corrSK3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kco
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
+    for (unsigned i =0; i < n*Wx*Hx; i++){
+        *(Y+i) = 0;
+    }
     unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
@@ -338,6 +341,10 @@ void corrSK3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *Krow, U *Kco
     unsigned Hz = Hx + Ph;
 
     T *Z = new float[Nz * Wz * Hz]; // the output
+
+    for (unsigned i =0; i < n*Wx*Hx; i++){
+        *(Y+i) = 0;
+    }
 
     unsigned ich, och; // input channels, output channels, rows and columns
 

@@ -47,6 +47,9 @@ void seq2d(T *X, unsigned Wx, unsigned Hx);
 template <class T>
 void seq3d(T *X, unsigned Nx, unsigned Wx, unsigned Hx);
 
+template <class T>
+void seq3dtest(T *X, T *Kcol, T *Krow, unsigned Nx, unsigned Wx, unsigned Hx);
+
 #include "libcorr.cpp"
 
 #endif

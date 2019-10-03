@@ -207,6 +207,9 @@ void corr3d0s_v1 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n,
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
+    for (unsigned i =0; i < n*Wx*Hx; i++) {
+        *(Y+i) = 0;
+    }
     unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
@@ -228,6 +231,9 @@ void corr3d0s_v2 (T *X, unsigned Nx, unsigned Wx, unsigned Hx, U *K, unsigned n,
 
     T *Z = new float[Nz * Wz * Hz]; // the output
 
+    for (unsigned i =0; i < n*Wx*Hx; i++){
+        *(Y+i) = 0;
+    }
     unsigned ich, och; // input channels, output channels, rows and columns
 
     for (och = 0; och < Nz; och++ ) {
@@ -308,4 +314,18 @@ void seq3d(T *X, unsigned Nx, unsigned Wx, unsigned Hx)
         }
     }
 }
+
+template <class T>
+void seq3dtest(T *X, T *Kcol, T *Krow, unsigned Nx, unsigned Wx, unsigned Hx)
+{
+    for (unsigned z = 0; z < Nx; z++) {
+        for (unsigned y = 0; y < Hx; y++) {
+            for (unsigned x = 0; x < Wx; x++) { 
+                // std::cout << z*Hx+y << " " << z*Wx+x << std::endl;
+                *(X+z*Wx*Hx+y*Wx+x) =  (*(Kcol+z*Hx+y))*(*(Krow+z*Wx+x));
+            }
+        }
+    }
+}
+
 

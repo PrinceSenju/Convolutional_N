@@ -195,10 +195,10 @@ void run_test(struct opts opt)
     float *Kcol = new float[opt. n* opt.Nx * opt.h];
     float *Krow = new float [opt.n * opt.Nx * opt.w];
 
-    // create a 2d array and
-    seq3d(K, opt.Nx * opt.n, opt.w, opt.h);
+    // create a 2d array and the separable arrays
     seq3d(Kcol, opt.Nx * opt.n, 1, opt.h);
     seq3d(Krow, opt.Nx * opt.n, opt.w, 1);
+    seq3dtest(K, Kcol, Krow, opt.Nx * opt.n, opt.w, opt.h);
     std::cout << "opt.Wx " << opt.Wx << std::endl;
     std::cout << "opt.w " << opt.w << std::endl;
     std::cout << "opt.Pw " << opt.Pw << std::endl;
